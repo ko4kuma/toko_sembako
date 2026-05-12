@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('nama_member');
             $table->string('alamat');
             $table->string('no_hp', 20);
-            $table->foreignId('diskon_id')->nullable()->constrained('diskon')->nullOnDelete();
+            $table->foreignId('diskon_id')->nullable()->constrained('diskons')->nullOnDelete();
             $table->timestamps();
         });
     }

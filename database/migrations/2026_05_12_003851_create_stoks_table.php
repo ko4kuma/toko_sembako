@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('stoks', function (Blueprint $table) {
             $table->id();
             $table->integer('jumlah');
-            $table->foreignId('barang_id')->constrained('barang')->cascadeOnDelete();
+            $table->foreignId('barang_id')->constrained('barangs')->cascadeOnDelete();
             $table->timestamps();
         });
     }
