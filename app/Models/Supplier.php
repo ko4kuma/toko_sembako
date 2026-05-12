@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models;
-use app\Models\Barang;
+use App\Models\Barang;
 
 use Illuminate\Database\Eloquent\Model;
 
