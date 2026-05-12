@@ -8,6 +8,8 @@ use app\Models\Transaksi;
 
 class Member extends Model
 {
+    protected $fillable = ['nama_member', 'alamat', 'no_hp'];
+
     public function diskon() {
         return $this->belongsTo(Diskon::class);
     }

@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('members', function (Blueprint $table) {
             $table->id();
+            $table->string('nama_member');
+            $table->string('alamat');
+            $table->string('no_hp', 20);
+            $table->foreignId('diskon_id')->nullable()->constrained('diskon')->nullOnDelete();
             $table->timestamps();
         });
     }

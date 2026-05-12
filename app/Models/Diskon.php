@@ -7,6 +7,8 @@ use app\Models\Member;
 
 class Diskon extends Model
 {
+    protected $fillable = ['nama_diskon', 'persentase'];
+    
     public function member() {
         return $this->hasMany(Member::class);
     }

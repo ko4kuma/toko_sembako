@@ -10,11 +10,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Barang extends Model
 {
+   protected $fillable = ['nama_barang', 'harga', 'kategori_id', 'supplier_id'];
+
    public function stok() {
     return $this->hasOne(Stok::class);
    }
    public function kategori() {
-    return $this->belongsToMany(Kategori::class);
+    return $this->belongsTo(Kategori::class);
    }
    public function supplier() {
     return $this->belongsTo(Supplier::class);

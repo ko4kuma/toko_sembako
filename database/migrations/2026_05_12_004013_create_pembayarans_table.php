@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('pembayarans', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('transaksi_id')->constrained('transaksi')->cascadeOnDelete();
+            $table->string('metode');
+            $table->decimal('jumlah', 12, 2);
             $table->timestamps();
         });
     }

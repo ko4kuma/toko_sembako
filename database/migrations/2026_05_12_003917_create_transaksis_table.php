@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('transaksis', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('member_id')->nullable()->constrained('members')->nullOnDelete();
             $table->timestamps();
         });
     }

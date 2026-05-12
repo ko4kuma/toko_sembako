@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('diskons', function (Blueprint $table) {
             $table->id();
+            $table->string('nama_diskon');
+            $table->decimal('persentase', 5, 2);
             $table->timestamps();
         });
     }

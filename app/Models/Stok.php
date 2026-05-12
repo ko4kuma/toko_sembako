@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Stok extends Model
 {
+    protected $fillable = ['jumlah'];
+
     public function barang() {
         return $this->belongsTo(Barang::class);
     }

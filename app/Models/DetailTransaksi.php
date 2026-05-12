@@ -8,6 +8,8 @@ use app\Models\Transaksi;
 
 class DetailTransaksi extends Model
 {
+    protected $fillable = ['barang_id', 'jumlah', 'harga_satuan'];
+
     public function barang(){
         return $this->belongsTo(Barang::class);
     }

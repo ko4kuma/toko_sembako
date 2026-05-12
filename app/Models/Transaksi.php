@@ -9,6 +9,8 @@ use app\Models\Pembayaran;
 
 class Transaksi extends Model
 {
+    protected $fillable = ['member_id'];
+
     public function member(){
         return $this->belongsTo(Member::class);
     }
