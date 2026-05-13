@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pembayaran extends Model
 {
-    protected $fillable = ['metode'];
+    protected $fillable = ['metode','jumlah','transaksi_id'];
 
     public function transaksi() {
         return $this->belongsTo(Transaksi::class);

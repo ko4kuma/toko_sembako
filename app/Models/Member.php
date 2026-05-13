@@ -8,7 +8,7 @@ use App\Models\Transaksi;
 
 class Member extends Model
 {
-    protected $fillable = ['nama_member', 'alamat', 'no_hp'];
+    protected $fillable = ['nama_member', 'alamat', 'no_hp', 'diskon_id'];
 
     public function diskon() {
         return $this->belongsTo(Diskon::class);
