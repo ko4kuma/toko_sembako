@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use app\Models\Member;
+use App\Models\Member;
 
 class Diskon extends Model
 {

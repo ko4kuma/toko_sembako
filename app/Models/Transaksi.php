@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Member;
+use App\Models\DetailTransaksi;
+use App\Models\Pembayaran;
 
 class Transaksi extends Model
 {
