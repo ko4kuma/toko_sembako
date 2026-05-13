@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models;
-use app\Models\Transaksi;
+use App\Models\Transaksi;
 
 use Illuminate\Database\Eloquent\Model;
 

@@ -1,10 +1,10 @@
 <?php
 
 namespace App\Models;
-use app\Models\Stok;
-use app\Models\Kategori;
-use app\Models\Supplier;
-use app\Models\DetailTransaksi;
+use App\Models\Stok;
+use App\Models\Kategori;
+use App\Models\Supplier;
+use App\Models\DetailTransaksi;
 
 use Illuminate\Database\Eloquent\Model;
 

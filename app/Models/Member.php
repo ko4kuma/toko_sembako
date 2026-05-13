@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use app\Models\Diskon;
-use app\Models\Transaksi;
+use App\Models\Diskon;
+use App\Models\Transaksi;
 
 class Member extends Model
 {
