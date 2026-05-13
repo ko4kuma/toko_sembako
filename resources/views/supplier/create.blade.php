@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Tambah Supplier')
 @section('content')
 
 <div class="container mt-5">

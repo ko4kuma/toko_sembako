@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use app\Models\Barang;
-use app\Models\Transaksi;
+use App\Models\Barang;
+use App\Models\Transaksi;
 
 class DetailTransaksi extends Model
 {
