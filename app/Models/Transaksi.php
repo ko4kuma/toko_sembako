@@ -9,7 +9,11 @@ use app\Models\Pembayaran;
 
 class Transaksi extends Model
 {
-    protected $fillable = ['member_id'];
+     protected $fillable = [
+        'member_id',
+        'tanggal',
+        'total'
+    ];
 
     public function member(){
         return $this->belongsTo(Member::class);
