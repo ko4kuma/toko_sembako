@@ -22,7 +22,7 @@
             <td>{{ $loop->iteration }}</td>
             <td>{{ $m->nama_member }}</td>
             <td>{{ $m->alamat }}</td>
-            <td>{{ $m->No HP }}</td>
+            <td>{{ $m->No_HP }}</td>
             <td>
                 <a href="{{ route('member.edit',$m->id) }}"
                     class="btn btn-warning btn-sm">
