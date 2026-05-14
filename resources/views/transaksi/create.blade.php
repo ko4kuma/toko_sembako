@@ -4,10 +4,10 @@
 
 <div class="container mt-4">
 
-{{-- ✅ TAMBAHAN: TAMPILKAN ERROR VALIDASI --}}
+{{-- ✅ ERROR VALIDASI --}}
 @if ($errors->any())
     <div class="alert alert-danger">
-        <ul>
+        <ul class="mb-0">
             @foreach ($errors->all() as $error)
                 <li>{{ $error }}</li>
             @endforeach
@@ -15,14 +15,21 @@
     </div>
 @endif
 
-{{-- ✅ TAMBAHAN: SUCCESS MESSAGE --}}
+{{-- ✅ ERROR DARI CONTROLLER --}}
+@if(session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
+
+{{-- ✅ SUCCESS MESSAGE --}}
 @if(session('success'))
     <div class="alert alert-success">
         {{ session('success') }}
     </div>
 @endif
 
-{{-- FORM --}}
+{{-- FORM TRANSAKSI --}}
 <form action="{{ route('transaksi.store') }}"
       method="POST">
 
@@ -31,7 +38,7 @@
     {{-- MEMBER --}}
     <div class="mb-3">
 
-        <label>Member</label>
+        <label class="form-label">Member</label>
 
         <select name="member_id"
                 class="form-control"
@@ -54,7 +61,7 @@
     {{-- TANGGAL --}}
     <div class="mb-3">
 
-        <label>Tanggal</label>
+        <label class="form-label">Tanggal</label>
 
         <input type="date"
                name="tanggal"
@@ -67,14 +74,15 @@
 
     <h5>Data Barang</h5>
 
-    {{-- TEMPAT FORM BARANG --}}
+    {{-- WRAPPER BARANG --}}
     <div id="barang-wrapper">
 
         <div class="row mb-3 barang-item">
 
+            {{-- BARANG --}}
             <div class="col-md-5">
 
-                <label>Barang</label>
+                <label class="form-label">Barang</label>
 
                 <select name="barang_id[]"
                         class="form-control"
@@ -85,8 +93,11 @@
                     @foreach($barang as $b)
 
                         <option value="{{ $b->id }}">
+
                             {{ $b->nama_barang }}
-                            - Rp {{ $b->harga }}
+                            - Rp {{ number_format($b->harga) }}
+                            (Stok: {{ $b->stok }})
+
                         </option>
 
                     @endforeach
@@ -95,18 +106,20 @@
 
             </div>
 
+            {{-- QTY --}}
             <div class="col-md-3">
 
-                <label>Qty</label>
+                <label class="form-label">Qty</label>
 
                 <input type="number"
                        name="qty[]"
                        class="form-control"
-                       required
-                       min="1">
+                       min="1"
+                       required>
 
             </div>
 
+            {{-- TOMBOL HAPUS --}}
             <div class="col-md-2 d-flex align-items-end">
 
                 <button type="button"
@@ -122,7 +135,7 @@
 
     </div>
 
-    {{-- TOMBOL TAMBAH --}}
+    {{-- TAMBAH BARANG --}}
     <button type="button"
             class="btn btn-info mb-3"
             id="tambah-barang">
@@ -133,8 +146,12 @@
 
     <br>
 
-    <button class="btn btn-success">
+    {{-- SUBMIT --}}
+    <button type="submit"
+            class="btn btn-success">
+
         Simpan Transaksi
+
     </button>
 
 </form>
@@ -153,7 +170,8 @@ document.getElementById('tambah-barang')
     let item =
         document.querySelector('.barang-item');
 
-    let clone = item.cloneNode(true);
+    let clone =
+        item.cloneNode(true);
 
     // reset value
     clone.querySelector('select').value = "";
@@ -162,7 +180,7 @@ document.getElementById('tambah-barang')
     wrapper.appendChild(clone);
 });
 
-// hapus barang
+// HAPUS BARANG
 document.addEventListener('click', function(e){
 
     if(e.target.classList.contains('remove-barang'))
