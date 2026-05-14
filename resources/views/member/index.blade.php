@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('layouts.app')
 
 @section('content')
 
@@ -22,7 +22,7 @@
             <td>{{ $loop->iteration }}</td>
             <td>{{ $m->nama_member }}</td>
             <td>{{ $m->alamat }}</td>
-            <td>{{ $m->No_HP }}</td>
+            <td>{{ $m->no_hp }}</td>
             <td>
                 <a href="{{ route('member.edit',$m->id) }}"
                     class="btn btn-warning btn-sm">

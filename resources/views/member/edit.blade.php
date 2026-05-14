@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('layouts.app')
 
 @section('content')
 
@@ -26,11 +26,11 @@
     </div>
 
     <div class="mb-3">
-        <label>No HP</label>
+        <label>No Hp</label>
 
         <input type="text"
-               name="telepon"
-               value="{{ $member->telepon }}"
+               name="no_hp"
+               value="{{ $member->no_hp }}"
                class="form-control">
     </div>
 

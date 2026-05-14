@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('layouts.app')
 
 @section('content')
 
@@ -29,8 +29,7 @@
         <td>{{ $t->tanggal }}</td>
         <td>Rp {{ $t->total }}</td>
 
-        <td>
-            <a href="{{ route('transaksi.detail',$t->id) }}"
+        <a href="{{ route('transaksi-detail',$t->id) }}"
             class="btn btn-info btn-sm">
 
             Detail

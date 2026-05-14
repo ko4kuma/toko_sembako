@@ -1,9 +1,28 @@
-@extends('layout')
+@extends('layouts.app')
 
 @section('content')
 
 <div class="container mt-4">
 
+{{-- ✅ TAMBAHAN: TAMPILKAN ERROR VALIDASI --}}
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
+{{-- ✅ TAMBAHAN: SUCCESS MESSAGE --}}
+@if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
+
+{{-- FORM --}}
 <form action="{{ route('transaksi.store') }}"
       method="POST">
 

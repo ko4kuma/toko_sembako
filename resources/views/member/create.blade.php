@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('layouts.app')
 
 @section('content')
 
@@ -19,8 +19,8 @@
     </div>
 
     <div class="mb-3">
-        <label>No HP</label>
-        <input type="text" name="telepon" class="form-control">
+        <label>No Hp</label>
+        <input type="text" name="no_hp" class="form-control">
     </div>
 
     <button class="btn btn-success">
