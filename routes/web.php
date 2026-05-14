@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\KategoriController;
 
 Route::resource('barang', BarangController::class)->except('show');
 Route::resource('supplier', SupplierController::class)->except('show');
+Route::resource('kategori', KategoriController::class)->except('show');
