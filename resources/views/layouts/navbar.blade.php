@@ -14,6 +14,7 @@
             <li><a class="dropdown-item" href="{{ route('barang.index') }}">Barang</a></li>
             <li><a class="dropdown-item" href="{{ route('kategori.index') }}">Kategori Barang</a></li>
             <li><a class="dropdown-item" href="{{ route('supplier.index') }}">Supplier</a></li>
+            <li><a class="dropdown-item" href="{{ route('pembayaran.index') }}">Pembayaran</a></li>
           </ul>
         </li>
       </ul>
