@@ -11,10 +11,12 @@
             Master Data
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="{{ route('barang.index') }}">Barang</a></li>
-            <li><a class="dropdown-item" href="{{ route('kategori.index') }}">Kategori Barang</a></li>
             <li><a class="dropdown-item" href="{{ route('supplier.index') }}">Supplier</a></li>
             <li><a class="dropdown-item" href="{{ route('pembayaran.index') }}">Pembayaran</a></li>
+            <li><a class="dropdown-item" href="{{ route('kategori.index') }}">Kategori Barang</a></li>
+            <li><a class="dropdown-item" href="{{ route('barang.index') }}">Barang</a></li>
+            <li><a class="dropdown-item" href="{{ route('member.index') }}">Member</a></li>
+            <li><a class="dropdown-item" href="{{ route('transaksi.index') }}">Transaksi</a></li>
           </ul>
         </li>
       </ul>
