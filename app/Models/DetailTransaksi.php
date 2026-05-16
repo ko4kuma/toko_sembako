@@ -8,12 +8,20 @@ use app\Models\Transaksi;
 
 class DetailTransaksi extends Model
 {
-    protected $fillable = ['barang_id', 'jumlah', 'harga_satuan'];
+    protected $fillable = [
+        'transaksi_id',
+        'barang_id',
+        'qty',
+        'subtotal'
+    ];
 
-    public function barang(){
+    public function barang()
+    {
         return $this->belongsTo(Barang::class);
     }
-    public function transaksi(){
+
+    public function transaksi()
+    {
         return $this->belongsTo(Transaksi::class);
     }
 }
