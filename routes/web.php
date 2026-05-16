@@ -6,6 +6,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\TransaksiController;
+use App\Http\Controllers\StokController;
 
 
 Route::resource('barang', BarangController::class)->except('show');
@@ -25,3 +26,6 @@ Route::get(
 
 Route::get('/transaksi/struk/{id}', [TransaksiController::class, 'struk'])
     ->name('transaksi.struk');
+
+Route::resource('stok', StokController::class);
+
