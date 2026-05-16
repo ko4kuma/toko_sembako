@@ -7,6 +7,7 @@ use App\Models\Transaksi;
 use App\Models\DetailTransaksi;
 use App\Models\Member;
 use App\Models\Barang;
+use App\Models\Stok;
 
 class TransaksiController extends Controller
 {
@@ -56,7 +57,7 @@ class TransaksiController extends Controller
 
             if($qty <= 0) continue;
 
-            if($barang->stok < $qty)
+            if($barang->stok->jumlah < $qty)
             {
                 return back()->with('error',
                     'Stok '.$barang->nama_barang.' tidak cukup!'
@@ -150,7 +151,7 @@ class TransaksiController extends Controller
 
             if($qty <= 0) continue;
 
-            if($barang->stok < $qty)
+            if($barang->stok->jumlah < $qty)
             {
                 return back()->with('error',
                     'Stok '.$barang->nama_barang.' tidak cukup!'
@@ -168,8 +169,8 @@ class TransaksiController extends Controller
             ]);
 
             // KURANGI STOK BARU
-            $barang->stok -= $qty;
-            $barang->save();
+            $barang->stok->jumlah -= $qty;
+            $barang->stok->save();
         }
 
         // UPDATE TRANSAKSI
