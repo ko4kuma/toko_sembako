@@ -16,6 +16,7 @@
             <li><a class="dropdown-item" href="{{ route('diskon.index') }}">Diskon</a></li>
             <li><a class="dropdown-item" href="{{ route('kategori.index') }}">Kategori Barang</a></li>
             <li><a class="dropdown-item" href="{{ route('barang.index') }}">Barang</a></li>
+            <li><a class="dropdown-item" href="{{ route('stok.index') }}">Stok</a></li>
             <li><a class="dropdown-item" href="{{ route('transaksi.index') }}">Transaksi</a></li>
             <li><a class="dropdown-item" href="{{ route('pembayaran.index') }}">Pembayaran</a></li>
           </ul>
