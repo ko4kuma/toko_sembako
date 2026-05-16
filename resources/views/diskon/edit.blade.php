@@ -1,35 +1,43 @@
-@extends('layout.index')
-
+@extends('layouts.app')
+@section('title', 'Edit Diskon')
 @section('content')
 
-<div class="container py-4">
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Edit Diskon</h4>
+                </div>
+                <div class="card-body">
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                   <form action="{{ route('diskon.update', $diskon->id) }}" method="POST">
+                        @method('PUT')
+                        @csrf
 
-    <div class="card border-1">
-
-        <div class="card-header bg-success text-white text-center">
-            <h5 class="mb-0 fw-bold">
-                Edit Diskon
-            </h5>
-        </div>
-
-        <div class="card-body">
-
-            <form action="{{ route('diskon.update', $diskon->id) }}" method="POST">
-                @csrf
-                @method('PUT')
-
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Nama Diskon</label>
-                    <input type="text"
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Nama Diskon
+                            </label>
+                            <input type="text"
                            name="nama_diskon"
                            class="form-control"
                            value="{{ $diskon->nama_diskon }}"
                            required>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Persentase</label>
-                    <input type="number"
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Persentase
+                            </label>
+                            <input type="number"
                            name="persentase"
                            class="form-control"
                            value="{{ $diskon->persentase }}"
@@ -37,26 +45,20 @@
                            max="100"
                            step="0.01"
                            required>
+                        </div>
+                        <button type="submit"
+                                class="btn btn-primary">
+                            Update
+                        </button>
+                        <a href="{{ route('diskon.index') }}"
+                           class="btn btn-secondary">
+                            Kembali
+                        </a>
+                    </form>
                 </div>
-
-                <div class="d-flex justify-content-end gap-2 mt-4">
-
-                    <a href="{{ route('diskon.index') }}" class="btn btn-secondary px-4">
-                        Kembali
-                    </a>
-
-                    <button type="submit" class="btn btn-success px-4">
-                        Update
-                    </button>
-
-                </div>
-
-            </form>
-
+            </div>
         </div>
-
     </div>
-
 </div>
 
 @endsection
