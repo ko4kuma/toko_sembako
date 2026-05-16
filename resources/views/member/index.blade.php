@@ -1,14 +1,19 @@
 @extends('layouts.app')
-
+@section('title', 'Daftar Member')
 @section('content')
 
 <div class="container mt-4">
-
+    <h1 class="mb-4">Daftar Member</h1>
+    @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
     <a href="{{ route('member.create') }}" class="btn btn-primary mb-3">
         Tambah Member
     </a>
 
-    <table class="table table-bordered">
+    <table class="table table-bordered table-striped">
         <tr>
             <th>No</th>
             <th>Nama Member</th>
