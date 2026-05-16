@@ -1,65 +1,63 @@
-@extends('layout.index')
-
+@extends('layouts.app')
+@section('title', 'Edit Stok')
 @section('content')
 
-<div class="container py-4">
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Edit Stok</h4>
+                </div>
+                <div class="card-body">
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    <form action="{{ route('stok.update', $stok->id) }}"
+                          method="POST">
+                        @method('PUT')
+                        @csrf
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Barang</label>
+                            <select name="barang_id" class="form-select" required>
+                                <option value="">Pilih Barang</option>
 
-    <div class="card border-1">
+                                @foreach($barang as $b)
+                                    <option value="{{ $b->id }}"
+                                        {{ $stok->barang_id == $b->id ? 'selected' : '' }}>
+                                        {{ $b->nama_barang }}
+                                    </option>
+                                @endforeach
 
-        <div class="card-header bg-success text-white text-center">
-            <h5 class="mb-0 fw-bold">
-                Edit Stok
-            </h5>
+                            </select>
+                        </div>        
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Jumlah</label>
+                            <input type="number"
+                                name="jumlah"
+                                class="form-control"
+                                value="{{ $stok->jumlah }}"
+                                required>
+                        </div> 
+                        <button type="submit"
+                                class="btn btn-primary">
+                            Update
+                        </button>
+                        <a href="{{ route('stok.index') }}"
+                           class="btn btn-secondary">
+                            Kembali
+                        </a>
+                    </form>
+                </div>
+            </div>
         </div>
-
-        <div class="card-body">
-
-            <form action="{{ route('stok.update', $stok->id) }}" method="POST">
-                @csrf
-                @method('PUT')
-
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Barang</label>
-                    <select name="barang_id" class="form-select" required>
-                        <option value="">Pilih Barang</option>
-
-                        @foreach($barang as $b)
-                            <option value="{{ $b->id }}"
-                                {{ $stok->barang_id == $b->id ? 'selected' : '' }}>
-                                {{ $b->nama_barang }}
-                            </option>
-                        @endforeach
-
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Jumlah</label>
-                    <input type="number"
-                           name="jumlah"
-                           class="form-control"
-                           value="{{ $stok->jumlah }}"
-                           required>
-                </div>
-
-                <div class="d-flex justify-content-end gap-2 mt-4">
-
-                    <a href="{{ route('stok.index') }}" class="btn btn-secondary px-4">
-                        Kembali
-                    </a>
-
-                    <button type="submit" class="btn btn-success px-4">
-                        Update
-                    </button>
-
-                </div>
-
-            </form>
-
-        </div>
-
     </div>
-
 </div>
 
 @endsection
