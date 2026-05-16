@@ -12,56 +12,60 @@
 
     <table class="table table-bordered">
 
-    <tr>
-        <th>No</th>
-        <th>Nama Member</th>
-        <th>Tanggal</th>
-        <th>Total</th>
-        <th>Aksi</th>
-    </tr>
+        <tr>
+            <th>No</th>
+            <th>Nama Member</th>
+            <th>Tanggal</th>
+            <th>Total</th>
+            <th>Aksi</th>
+        </tr>
 
-    @foreach($transaksi as $t)
+        @foreach($transaksi as $t)
 
-    <tr>
+        <tr>
 
-        <td>{{ $loop->iteration }}</td>
-        <td>{{ $t->member->nama_member }}</td>
-        <td>{{ $t->tanggal }}</td>
-        <td>Rp {{ $t->total }}</td>
+            <td>{{ $loop->iteration }}</td>
+            <td>{{ $t->member->nama_member }}</td>
+            <td>{{ $t->tanggal }}</td>
+            <td>Rp {{ $t->total }}</td>
 
-        <a href="{{ route('transaksi-detail',$t->id) }}"
-            class="btn btn-info btn-sm">
+            {{-- AKSI --}}
+            <td>
 
-            Detail
+                <a href="{{ route('transaksi.detail', $t->id) }}"
+                   class="btn btn-info btn-sm">
 
-            </a>
-            <a href="{{ route('transaksi.edit',$t->id) }}"
-               class="btn btn-warning btn-sm">
+                    Detail
 
-               Edit
-            </a>
-            
+                </a>
 
-            <form action="{{ route('transaksi.destroy',$t->id) }}"
-                  method="POST"
-                  style="display:inline">
+                <a href="{{ route('transaksi.edit', $t->id) }}"
+                   class="btn btn-warning btn-sm">
 
-                @csrf
-                @method('DELETE')
+                   Edit
 
-                <button class="btn btn-danger btn-sm">
-                    Hapus
-                </button>
+                </a>
 
-            </form>
+                <form action="{{ route('transaksi.destroy', $t->id) }}"
+                      method="POST"
+                      style="display:inline">
 
-        </td>
+                    @csrf
+                    @method('DELETE')
 
-    </tr>
+                    <button class="btn btn-danger btn-sm">
+                        Hapus
+                    </button>
 
-    @endforeach
+                </form>
 
-</table>
+            </td>
+
+        </tr>
+
+        @endforeach
+
+    </table>
 
 </div>
 

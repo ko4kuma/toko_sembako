@@ -79,7 +79,7 @@ class TransaksiController extends Controller
             $barang = Barang::findOrFail($barangId);
             $qty = $request->qty[$key];
 
-            if($qty <= 0) continue;
+            if($qty >= 0) continue;
 
             DetailTransaksi::create([
                 'transaksi_id' => $transaksi->id,
