@@ -7,7 +7,6 @@ use App\Models\Transaksi;
 use App\Models\DetailTransaksi;
 use App\Models\Member;
 use App\Models\Barang;
-use App\Models\Stok;
 
 class TransaksiController extends Controller
 {
@@ -80,7 +79,7 @@ class TransaksiController extends Controller
             $barang = Barang::findOrFail($barangId);
             $qty = $request->qty[$key];
 
-            if($qty >= 0) continue;
+            if($qty <= 0) continue;
 
             DetailTransaksi::create([
                 'transaksi_id' => $transaksi->id,
@@ -90,8 +89,8 @@ class TransaksiController extends Controller
             ]);
 
             // KURANGI STOK
-            $barang->stok -= $qty;
-            $barang->save();
+            $barang->stok->jumlah -= $qty;
+            $barang->stok->save();
         }
 
         return redirect()->route('transaksi.index')
@@ -134,8 +133,8 @@ class TransaksiController extends Controller
         foreach($detailLama as $d)
         {
             $barang = Barang::find($d->barang_id);
-            $barang->stok += $d->qty;
-            $barang->save();
+            $barang->stok->jumlah += $d->qty;
+            $barang->stok->save();
         }
 
         // HAPUS DETAIL LAMA
@@ -197,8 +196,8 @@ class TransaksiController extends Controller
         foreach($detail as $d)
         {
             $barang = Barang::find($d->barang_id);
-            $barang->stok += $d->qty;
-            $barang->save();
+            $barang->stok->jumlah += $d->qty;
+            $barang->stok->save();
         }
 
         DetailTransaksi::where('transaksi_id',$id)->delete();

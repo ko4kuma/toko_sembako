@@ -7,7 +7,7 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <h4>Tambah Supplier</h4>
+                    <h4>Tambah Member</h4>
                 </div>
                 <div class="card-body">
                     @if ($errors->any())

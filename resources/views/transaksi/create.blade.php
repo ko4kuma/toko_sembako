@@ -96,7 +96,7 @@
 
                             {{ $b->nama_barang }}
                             - Rp {{ number_format($b->harga) }}
-                            (Stok: {{ $b->stok }})
+                            (Stok: {{ $b->stok->jumlah }})
 
                         </option>
 
