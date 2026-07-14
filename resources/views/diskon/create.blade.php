@@ -34,6 +34,50 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">
+                                Tipe Diskon
+                                <select name="tipe" class="form-select" required>
+                                    <option value="">-- Pilih Tipe --</option>
+                                    @foreach(\App\Models\Diskon::TIPE as $value => $label)
+                                        <option value="{{ $value }}">
+                                            {{ $label }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </label>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Syarat Minimal Pembelian
+                            </label>
+                            <input type="number"
+                                   name="syarat_minimal"
+                                   class="form-control"
+                                   placeholder="Masukkan syarat minimal"
+                           required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Berlaku mulai
+                            </label>
+                            <div class="d-flex align-items-center gap-2">
+                                <input type="date"
+                                       name="berlaku_mulai"
+                                       class="form-control"
+                                       min="{{ now()->toDateString() }}"
+                                       value="{{ ('berlaku_mulai') }}"
+                               >
+                               <span>sampai</span>
+                               <input type="date"
+                                      name="berlaku_sampai"
+                                      class="form-control"
+                                      min="{{ now()->toDateString() }}"
+                                      value="{{ ('berlaku_sampai') }}"
+                              >
+
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">
                                 Persentase (%)
                             </label>
                             <input type="number"
