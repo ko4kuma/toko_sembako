@@ -85,6 +85,7 @@ class TransaksiController extends Controller
                 'transaksi_id' => $transaksi->id,
                 'barang_id' => $barangId,
                 'qty' => $qty,
+                'harga_satuan' => $barang->harga,
                 'subtotal' => $barang->harga * $qty
             ]);
 

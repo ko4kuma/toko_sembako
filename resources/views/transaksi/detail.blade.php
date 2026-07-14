@@ -49,7 +49,7 @@
 
             {{-- HARGA BARANG --}}
             <td>
-                Rp {{ number_format($d->barang->harga) }}
+                Rp {{ number_format($d->harga_satuan) }}
             </td>
 
             {{-- QTY --}}
