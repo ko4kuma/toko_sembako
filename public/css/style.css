@@ -1,0 +1,15 @@
+.custom-push-offcanvas {
+  position: relative !important; 
+  width: 280px;
+  max-width: 280px;
+  transform: none !important;   
+  transition: margin-left 0.3s ease-in-out;
+  margin-left: -280px;         
+  visibility: visible !important;
+}
+.custom-push-offcanvas.show {
+  margin-left: 0;         
+}
+#mainContent {
+  transition: margin-left 0.3s ease-in-out;
+}
