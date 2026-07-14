@@ -1,9 +1,14 @@
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">POS Toko Sembako</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
+<nav class="navbar navbar-expand-lg">
+<button class="btn" id="sidebarToggle" type="button">
+        <i class="bi bi-list fs-4"></i>
     </button>
+    <span class="navbar-brand ms-2 mb-0">POS Toko Sembako</span>
+</nav>
+{{-- <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <button class="btn btn-outline-light" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
+      <i class="bi bi-list fs-4"></i>
+    </button>
+    <span class="navbar-brand ms-2 mb-0">POS Toko Sembako</span>
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
       <ul class="navbar-nav">
         <li class="nav-item dropdown">
@@ -23,5 +28,4 @@
         </li>
       </ul>
     </div>
-  </div>
-</nav>
+</nav> --}}
