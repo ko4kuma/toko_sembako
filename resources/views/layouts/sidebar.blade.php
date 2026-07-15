@@ -10,7 +10,7 @@
             </li>
             {{-- Kasir --}}
             <li class="nav-item">
-                <a class="nav-link text-dark d-flex align-items-center gap-1" href="{{ route('transaksi.index') }}">
+                <a class="nav-link text-dark d-flex align-items-center gap-1" href="{{ route('transaksi.create') }}">
                     <i class="bi bi-cash"></i> Kasir
                 </a>
             </li>

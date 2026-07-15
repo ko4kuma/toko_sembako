@@ -27,7 +27,7 @@ Route::redirect('/', '/member');
 Route::get('member/search', [MemberController::class, 'search'])->name('member.search');
 Route::resource('member', MemberController::class);
 
-Route::resource('transaksi', TransaksiController::class);
+Route::resource('transaksi', TransaksiController::class)->except(['edit', 'update', 'destroy']);
 
 Route::get(
     '/transaksi/{id}/detail',

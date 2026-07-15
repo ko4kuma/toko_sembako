@@ -103,6 +103,7 @@ class TransaksiController extends Controller
             'diskon' => $totalDiskon,
             'total_akhir' => $totalAkhir,
         ]);
+
         // SIMPAN RINCIAN DISKON YANG DIPAKAI
         foreach ($diskonList as $d) {
             TransaksiDiskon::create([
@@ -132,122 +133,122 @@ class TransaksiController extends Controller
             $barang->stok->save();
         }
 
-        return redirect()->route('transaksi.index')
-            ->with('success','Transaksi berhasil ditambahkan');
+        return redirect()->route('transaksi.create')
+            ->with('success','Transaksi berhasil!');
     }
 
     // =========================
     // FORM EDIT (SUDAH FIX MULTI)
     // =========================
-    public function edit($id)
-    {
-        $transaksi = Transaksi::findOrFail($id);
-        $member = Member::all();
-        $barang = Barang::all();
+    // public function edit($id)
+    // {
+    //     $transaksi = Transaksi::findOrFail($id);
+    //     $member = Member::all();
+    //     $barang = Barang::all();
 
-        // FIX: HARUS GET (bukan first)
-        $detail = DetailTransaksi::where('transaksi_id',$id)->get();
+    //     // FIX: HARUS GET (bukan first)
+    //     $detail = DetailTransaksi::where('transaksi_id',$id)->get();
 
-        return view('transaksi.edit', compact('transaksi','member','barang','detail'));
-    }
+    //     return view('transaksi.edit', compact('transaksi','member','barang','detail'));
+    // }
 
     // =========================
     // UPDATE TRANSAKSI (SUDAH FIX MULTI + STOK AMAN)
     // =========================
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'member_id' => 'nullable|exists:members,id',
-            'tanggal' => 'required|date',
-            'barang_id' => 'required|array',
-            'qty' => 'required|array',
-            'diskon_ids' => 'nullable|array',
-            'diskon_ids.*' => 'exists:diskons,id',
-        ]);
+    // public function update(Request $request, $id)
+    // {
+    //     $request->validate([
+    //         'member_id' => 'nullable|exists:members,id',
+    //         'tanggal' => 'required|date',
+    //         'barang_id' => 'required|array',
+    //         'qty' => 'required|array',
+    //         'diskon_ids' => 'nullable|array',
+    //         'diskon_ids.*' => 'exists:diskons,id',
+    //     ]);
 
-        $transaksi = Transaksi::findOrFail($id);
+    //     $transaksi = Transaksi::findOrFail($id);
 
-        // AMBIL DETAIL LAMA (UNTUK BALIK STOK)
-        $detailLama = DetailTransaksi::where('transaksi_id',$id)->get();
+    //     // AMBIL DETAIL LAMA (UNTUK BALIK STOK)
+    //     $detailLama = DetailTransaksi::where('transaksi_id',$id)->get();
 
-        // BALIK STOK LAMA
-        foreach($detailLama as $d)
-        {
-            $barang = Barang::find($d->barang_id);
-            $barang->stok->jumlah += $d->qty;
-            $barang->stok->save();
-        }
+    //     // BALIK STOK LAMA
+    //     foreach($detailLama as $d)
+    //     {
+    //         $barang = Barang::find($d->barang_id);
+    //         $barang->stok->jumlah += $d->qty;
+    //         $barang->stok->save();
+    //     }
 
-        // HAPUS DETAIL LAMA
-        DetailTransaksi::where('transaksi_id',$id)->delete();
+    //     // HAPUS DETAIL LAMA
+    //     DetailTransaksi::where('transaksi_id',$id)->delete();
 
-        $total = 0;
+    //     $total = 0;
 
-        // SIMPAN ULANG DETAIL BARU
-        foreach($request->barang_id as $key => $barangId)
-        {
-            $barang = Barang::findOrFail($barangId);
-            $qty = $request->qty[$key];
+    //     // SIMPAN ULANG DETAIL BARU
+    //     foreach($request->barang_id as $key => $barangId)
+    //     {
+    //         $barang = Barang::findOrFail($barangId);
+    //         $qty = $request->qty[$key];
 
-            if($qty <= 0) continue;
+    //         if($qty <= 0) continue;
 
-            if($barang->stok->jumlah < $qty)
-            {
-                return back()->with('error',
-                    'Stok '.$barang->nama_barang.' tidak cukup!'
-                );
-            }
+    //         if($barang->stok->jumlah < $qty)
+    //         {
+    //             return back()->with('error',
+    //                 'Stok '.$barang->nama_barang.' tidak cukup!'
+    //             );
+    //         }
 
-            $subtotal = $barang->harga * $qty;
-            $total += $subtotal;
+    //         $subtotal = $barang->harga * $qty;
+    //         $total += $subtotal;
 
-            DetailTransaksi::create([
-                'transaksi_id' => $id,
-                'barang_id' => $barangId,
-                'qty' => $qty,
-                'subtotal' => $subtotal
-            ]);
+    //         DetailTransaksi::create([
+    //             'transaksi_id' => $id,
+    //             'barang_id' => $barangId,
+    //             'qty' => $qty,
+    //             'subtotal' => $subtotal
+    //         ]);
 
-            // KURANGI STOK BARU
-            $barang->stok->jumlah -= $qty;
-            $barang->stok->save();
-        }
+    //         // KURANGI STOK BARU
+    //         $barang->stok->jumlah -= $qty;
+    //         $barang->stok->save();
+    //     }
 
-        // UPDATE TRANSAKSI
-        $transaksi->update([
-            'member_id' => $request->member_id,
-            'tanggal' => $request->tanggal,
-            'total' => $total
-        ]);
+    //     // UPDATE TRANSAKSI
+    //     $transaksi->update([
+    //         'member_id' => $request->member_id,
+    //         'tanggal' => $request->tanggal,
+    //         'total' => $total
+    //     ]);
 
-        return redirect()->route('transaksi.index')
-            ->with('success','Transaksi berhasil diupdate');
-    }
+    //     return redirect()->route('transaksi.index')
+    //         ->with('success','Transaksi berhasil diupdate');
+    // }
 
     // =========================
     // HAPUS TRANSAKSI
     // =========================
-    public function destroy($id)
-    {
-        $transaksi = Transaksi::findOrFail($id);
+    // public function destroy($id)
+    // {
+    //     $transaksi = Transaksi::findOrFail($id);
 
-        // BALIK STOK SEBELUM HAPUS
-        $detail = DetailTransaksi::where('transaksi_id',$id)->get();
+    //     // BALIK STOK SEBELUM HAPUS
+    //     $detail = DetailTransaksi::where('transaksi_id',$id)->get();
 
-        foreach($detail as $d)
-        {
-            $barang = Barang::find($d->barang_id);
-            $barang->stok->jumlah += $d->qty;
-            $barang->stok->save();
-        }
+    //     foreach($detail as $d)
+    //     {
+    //         $barang = Barang::find($d->barang_id);
+    //         $barang->stok->jumlah += $d->qty;
+    //         $barang->stok->save();
+    //     }
 
-        DetailTransaksi::where('transaksi_id',$id)->delete();
+    //     DetailTransaksi::where('transaksi_id',$id)->delete();
 
-        $transaksi->delete();
+    //     $transaksi->delete();
 
-        return redirect()->route('transaksi.index')
-            ->with('success','Transaksi berhasil dihapus');
-    }
+    //     return redirect()->route('transaksi.index')
+    //         ->with('success','Transaksi berhasil dihapus');
+    // }
 
     // =========================
     // DETAIL

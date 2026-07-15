@@ -60,10 +60,12 @@
                         </td>
 
                          <td>
-                            @if($d->aktif)
-                                <span class="badge bg-success">Aktif</span>
-                            @else
+                            @if(!$d->aktif)
                                 <span class="badge bg-secondary">Nonaktif</span>
+                            @elseif($d->berlaku_sampai && $d->berlaku_sampai->isPast())
+                                <span class="badge bg-warning text-dark">Aktif (Kedaluwarsa)</span>
+                            @else
+                                <span class="badge bg-success">Aktif</span>
                             @endif
                         </td>
 

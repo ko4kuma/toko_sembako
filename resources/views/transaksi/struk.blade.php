@@ -51,7 +51,14 @@
     <p class="center">Toko Sembako</p>
     <hr>
 
-    <p><b>Member:</b> {{ $transaksi->member->nama_member }}</p>
+    <p>
+        <b>Member:</b> 
+        @if($transaksi->member)
+            {{ $transaksi->member->nama_member }}
+        @else
+            Non Member
+        @endif
+    </p>
     <p><b>Tanggal:</b> {{ $transaksi->tanggal }}</p>
 
     <hr>
@@ -59,9 +66,9 @@
     <table>
 
         <tr>
-            <th>Barang</th>
+            <th>Nama Barang</th>
             <th>Qty</th>
-            <th>Subtotal</th>
+            <th>Subtotal Akhir</th>
         </tr>
 
         @foreach($detail as $d)
@@ -69,7 +76,7 @@
         <tr>
             <td>{{ $d->barang->nama_barang }}</td>
             <td>{{ $d->qty }}</td>
-            <td>Rp {{ $d->subtotal }}</td>
+            <td>Rp {{ number_format($d->transaksi->total_akhir) }}</td>
         </tr>
 
         @endforeach
@@ -78,7 +85,7 @@
 
     <hr>
 
-    <p><b>Total:</b> Rp {{ $transaksi->total }}</p>
+    <p><b>Total:</b> Rp {{ number_format($transaksi->total_akhir) }}</p>
 
     <br>
 

@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('title', 'Kasir')
 @section('content')
 
 <div class="container mt-4">
@@ -180,6 +180,7 @@ document.getElementById('tambah-barang')
     clone.querySelector('input').value = "";
 
     wrapper.appendChild(clone);
+    refreshBarangOptions();
 });
 
 // HAPUS BARANG
@@ -193,6 +194,7 @@ document.addEventListener('click', function(e){
         if(items.length > 1)
         {
             e.target.closest('.barang-item').remove();
+            refreshBarangOptions();
         }
     }
 
@@ -224,6 +226,31 @@ function hitungTotalBelanja() {
     });
 
     return total;
+}
+
+function refreshBarangOptions() {
+    let semuaSelect = document.querySelectorAll('select[name="barang_id[]"]');
+
+    // KUMPULIN SEMUA VALUE YANG UDAH DIPILIH
+    let terpilih = [];
+    semuaSelect.forEach(function(s) {
+        if (s.value) terpilih.push(s.value);
+    });
+
+    // LOOP TIAP SELECT, DISABLE OPTION YANG DIPILIH DI SELECT LAIN
+    semuaSelect.forEach(function(select) {
+        let valueSendiri = select.value;
+
+        select.querySelectorAll('option').forEach(function(opt) {
+            if (!opt.value) return; // skip "-- Pilih Barang --"
+
+            if (terpilih.includes(opt.value) && opt.value !== valueSendiri) {
+                opt.disabled = true;
+            } else {
+                opt.disabled = false;
+            }
+        });
+    });
 }
 
 // ================================
@@ -474,6 +501,7 @@ document.addEventListener('input', function (e) {
 document.addEventListener('change', function (e) {
     if (e.target.matches('select[name="barang_id[]"]')) {
         hitungUlang();
+        refreshBarangOptions();
     }
 });
 // ================================
@@ -515,6 +543,7 @@ document.querySelector('form').addEventListener('submit', function (e) {
 
 document.addEventListener('DOMContentLoaded', function () {
     hitungUlang();
+    refreshBarangOptions();
 });
 </script>
 
