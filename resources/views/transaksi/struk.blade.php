@@ -68,7 +68,7 @@
         <tr>
             <th>Nama Barang</th>
             <th>Qty</th>
-            <th>Subtotal Akhir</th>
+            <th>Harga</th>
         </tr>
 
         @foreach($detail as $d)
@@ -76,7 +76,7 @@
         <tr>
             <td>{{ $d->barang->nama_barang }}</td>
             <td>{{ $d->qty }}</td>
-            <td>Rp {{ number_format($d->transaksi->total_akhir) }}</td>
+            <td>Rp {{ number_format($d->subtotal) }}</td>
         </tr>
 
         @endforeach
@@ -85,7 +85,15 @@
 
     <hr>
 
-    <p><b>Total:</b> Rp {{ number_format($transaksi->total_akhir) }}</p>
+    <p><b>Subtotal:</b> Rp {{ number_format($transaksi->total) }}</p>
+    <p><b>Diskon:</b>
+        @if($transaksi->diskon > 0)
+            Rp {{ number_format($transaksi->diskon) }}
+        @else
+            -
+        @endif
+    </p>
+    <p><b>Total Akhir:</b> Rp {{ number_format($transaksi->total_akhir) }}</p>
 
     <br>
 

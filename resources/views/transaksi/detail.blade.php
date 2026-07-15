@@ -1,10 +1,10 @@
 @extends('layouts.app')
-@section('title', 'Detail Transaksi')
+@section('title', 'Detail Penjualan')
 @section('content')
 
 <div class="container mt-4">
 
-    <h3>Detail Transaksi</h3>
+    <h1 class="mb-4">Detail Penjualan</h1>
 
     {{-- INFO TRANSAKSI --}}
     <table class="table table-bordered mb-4">
@@ -31,18 +31,16 @@
         </tr>
 
     </table>
-
+    <hr>
     {{-- DETAIL BARANG --}}
     <table class="table table-bordered">
 
         <tr>
             <th>No</th>
             <th>Nama Barang</th>
-            <th>Harga</th>
+            <th>Harga Satuan</th>
             <th>Qty</th>
-            <th>Subtotal</th>
-            <th>Diskon</th>
-            <th>Subtotal Akhir</th>
+            <th>Harga</th>
         </tr>
 
         @foreach($detail as $d)
@@ -55,7 +53,7 @@
                 {{ $d->barang->nama_barang }}
             </td>
 
-            {{-- HARGA BARANG --}}
+            {{-- HARGA SATUAN --}}
             <td>
                 Rp {{ number_format($d->harga_satuan) }}
             </td>
@@ -65,23 +63,9 @@
                 {{ $d->qty }}
             </td>
             
-            {{-- SUBTOTAL --}}
+            {{-- HARGA --}}
             <td>
                 Rp {{ number_format($d->subtotal) }}
-            </td>
-            
-            {{-- NOMINAL DISKON --}}
-            <td>
-                @if($d->transaksi->diskon > 0)
-                    Rp {{ number_format($d->transaksi->diskon) }}
-                @else
-                    -
-                @endif
-            </td>
-
-            {{-- SUBTOTAL AKHIR --}}
-            <td>
-                Rp {{ number_format($d->transaksi->total_akhir) }}
             </td>
 
         </tr>
@@ -89,6 +73,18 @@
         @endforeach
 
     </table>
+        <hr>
+        <div class="mb-4">
+            <p class="mb-0"><strong>Subtotal:</strong> Rp {{ number_format($transaksi->total) }}</p>
+            <p class="mb-1"><strong>Diskon:</strong>
+                @if($transaksi->diskon > 0)
+                    Rp {{ number_format($transaksi->diskon) }}
+                @else
+                    -
+                @endif
+            </p>
+            <p class="mb-0"><strong>Total Akhir:</strong> Rp {{ number_format($transaksi->total_akhir) }}</p>
+        </div>
 
     <a href="/transaksi"
        class="btn btn-secondary">

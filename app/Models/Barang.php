@@ -12,16 +12,20 @@ class Barang extends Model
 {
    protected $fillable = ['nama_barang', 'harga', 'kategori_id', 'supplier_id'];
 
-   public function stok() {
-    return $this->hasOne(Stok::class);
+   public function riwayatStok() {
+      return $this->hasMany(Stok::class);
    }
    public function kategori() {
-    return $this->belongsTo(Kategori::class);
+      return $this->belongsTo(Kategori::class);
    }
    public function supplier() {
-    return $this->belongsTo(Supplier::class);
+      return $this->belongsTo(Supplier::class);
    }
    public function detailTransaksi() {
-    return $this->hasMany(DetailTransaksi::class);
+      return $this->hasMany(DetailTransaksi::class);
+   }
+   public function stokTerkini() {
+      $stokTerakhir = $this->riwayatStok()->latest()->first();
+      return $stokTerakhir ? $stokTerakhir->stok_sesudah : 0;
    }
 }

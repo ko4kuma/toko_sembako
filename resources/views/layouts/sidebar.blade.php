@@ -23,15 +23,14 @@
                 </a>
                 <div class="collapse ms-3" id="masterDataMenu" data-bs-parent="#sidebarAccordion">
                     <ul class="nav flex-column">
-                        <li><a class="nav-link icon-link text-dark" href="{{ route('supplier.index') }}"> Supplier</a></li>
-                        <li><a class="nav-link icon-link text-dark" href="{{ route('member.index') }}"> Member</a></li>
                         <li><a class="nav-link icon-link text-dark" href="{{ route('kategori.index') }}"> Kategori Barang</a></li>
+                        <li><a class="nav-link icon-link text-dark" href="{{ route('supplier.index') }}"> Supplier</a></li>
                         <li><a class="nav-link icon-link text-dark" href="{{ route('barang.index') }}"> Barang</a></li>
                         <li><a class="nav-link icon-link text-dark" href="{{ route('diskon.index') }}"> Diskon</a></li>
+                        <li><a class="nav-link icon-link text-dark" href="{{ route('member.index') }}"> Member</a></li>
                     </ul>
                 </div>
             </li>
-
             {{-- Stok --}}
             <li class="nav-item">
                 <a class="nav-link text-dark d-flex justify-content-between align-items-center gap-1" href="#stokMenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="stokMenu">
@@ -40,7 +39,7 @@
                 </a>
                 <div class="collapse ms-3" id="stokMenu" data-bs-parent="#sidebarAccordion">
                     <ul class="nav flex-column">
-                        <li><a class="nav-link icon-link text-dark" href="{{ route('stok.index') }}">Daftar Stok</a></li>
+                        <li><a class="nav-link icon-link text-dark" href="{{ route('stok.index') }}">Pergerakan Stok</a></li>
                         <li><a class="nav-link icon-link text-dark" href="#"> Stok Opname</a></li>
                     </ul>
                 </div>
@@ -56,7 +55,6 @@
                     <ul class="nav flex-column">
                         <li><a class="nav-link icon-link text-dark" href="{{ route('transaksi.index') }}">Penjualan</a></li>
                         <li><a class="nav-link icon-link text-dark" href="#"> Pembelian</a></li>
-                        <li><a class="nav-link icon-link text-dark" href="#"> Pergerakan Stok</a></li>
                     </ul>
                 </div>
             </li>

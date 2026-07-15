@@ -9,6 +9,7 @@ use App\Models\Member;
 use App\Models\Barang;
 use App\Models\Diskon;
 use App\Models\TransaksiDiskon;
+use App\Models\Stok;
 
 class TransaksiController extends Controller
 {
@@ -60,7 +61,7 @@ class TransaksiController extends Controller
 
             if($qty <= 0) continue;
 
-            if($barang->stok->jumlah < $qty)
+            if($barang->stokTerkini() < $qty)
             {
                 return back()->with('error',
                     'Stok '.$barang->nama_barang.' tidak cukup!'
@@ -129,8 +130,18 @@ class TransaksiController extends Controller
             ]);
 
             // KURANGI STOK
-            $barang->stok->jumlah -= $qty;
-            $barang->stok->save();
+            $stokSebelum = $barang->stokTerkini();
+            $stokSesudah = $stokSebelum - $qty;
+
+            Stok::create([
+                'barang_id' => $barang->id,
+                'jumlah' => $qty,
+                'jenis' => 'keluar',
+                'stok_sebelum' => $stokSebelum,
+                'stok_sesudah' => $stokSesudah,
+                'referensi_type' => Transaksi::class,
+                'referensi_id' => $transaksi->id,
+            ]);
         }
 
         return redirect()->route('transaksi.create')
