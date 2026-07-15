@@ -17,16 +17,22 @@
     <script src="{{ asset('js/app.js') }}"></script>
 </head>
 <body>
-    @include('layouts.navbar')
-    {{-- wrapper sidebar --}}
-    <div class="d-flex" id="appWrapper">
-        @include('layouts.sidebar')
+    @if (!request()->is('login'))
+        @include('layouts.navbar')
+        {{-- wrapper sidebar --}}
+        <div class="d-flex" id="appWrapper">
+            @include('layouts.sidebar')
 
-        <div class="flex-grow-1" id="mainContent">
-            <div class="container-fluid p-3">
-                @yield('content')
+            <div class="flex-grow-1" id="mainContent">
+                <div class="container-fluid p-3">
+                    @yield('content')
+                </div>
             </div>
         </div>
-    </div>
+    @else
+        <div class="container-fluid p-3">
+            @yield('content')
+        </div>
+    @endif
 </body>
 </html>
