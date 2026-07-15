@@ -10,6 +10,7 @@ use App\Models\Barang;
 use App\Models\Diskon;
 use App\Models\TransaksiDiskon;
 use App\Models\Stok;
+use App\Models\Pembayaran;
 
 class TransaksiController extends Controller
 {
@@ -49,6 +50,8 @@ class TransaksiController extends Controller
             'qty.*' => 'required|numeric|min:1',
             'diskon_ids' => 'nullable|array',
             'diskon_ids.*' => 'exists:diskons,id',
+            'metode' => 'required|in:cash,transfer,qris,debit',
+            'jumlah' => 'required|numeric|min:0',
         ]);
 
         $total = 0;
@@ -143,6 +146,28 @@ class TransaksiController extends Controller
                 'referensi_id' => $transaksi->id,
             ]);
         }
+
+        // VALIDASI & SIMPAN PEMBAYARAN
+        $jumlahDibayar = $request->jumlah;
+        $kembalian = 0;
+
+        if ($request->metode === 'cash') {
+            if ($jumlahDibayar < $totalAkhir) {
+                return back()->with('error', 'Jumlah dibayar kurang dari total akhir.');
+            }
+            $kembalian = $jumlahDibayar - $totalAkhir;
+        } else {
+            // NON-CASH: paksa sama dengan total akhir, gak ada kembalian
+            $jumlahDibayar = $totalAkhir;
+            $kembalian = 0;
+        }
+
+        Pembayaran::create([
+            'transaksi_id' => $transaksi->id,
+            'metode' => $request->metode,
+            'jumlah' => $jumlahDibayar,
+            'kembalian' => $kembalian,
+        ]);
 
         return redirect()->route('transaksi.create')
             ->with('success','Transaksi berhasil!');
@@ -266,7 +291,7 @@ class TransaksiController extends Controller
     // =========================
     public function detail($id)
     {
-        $transaksi = Transaksi::with('member')->findOrFail($id);
+        $transaksi = Transaksi::with(['member', 'pembayaran'])->findOrFail($id);
 
         $detail = DetailTransaksi::with('barang')
                     ->where('transaksi_id',$id)
@@ -280,8 +305,8 @@ class TransaksiController extends Controller
     // =========================
     public function struk($id)
     {
-        $transaksi = Transaksi::with('member')
-                        ->findOrFail($id);
+        $transaksi = Transaksi::with(['member', 'pembayaran'])
+                ->findOrFail($id);
 
         $detail = DetailTransaksi::with('barang')
                     ->where('transaksi_id', $id)

@@ -148,11 +148,43 @@
     <div class="mb-3">
         <strong>Total Akhir: Rp <span id="total-akhir">0</span></strong>
     </div>
-    {{-- SUBMIT --}}
-    <button type="submit"
-            class="btn btn-success">
 
-        Simpan Transaksi
+    <hr>
+
+    <h5>Pembayaran</h5>
+
+    {{-- METODE PEMBAYARAN --}}
+    <div class="mb-3">
+        <label class="form-label">Metode Pembayaran</label>
+        <select name="metode" id="metode-pembayaran" class="form-control" required>
+            <option value="">-- Pilih Metode --</option>
+            <option value="cash">Cash</option>
+            <option value="transfer">Transfer</option>
+            <option value="qris">QRIS</option>
+            <option value="debit">Debit</option>
+        </select>
+    </div>
+
+    {{-- JUMLAH DIBAYAR --}}
+    <div class="mb-3">
+        <label class="form-label">Jumlah Dibayar</label>
+        <input type="number"
+               name="jumlah"
+               id="jumlah-dibayar"
+               class="form-control"
+               min="0"
+               required>
+    </div>
+
+    {{-- KEMBALIAN --}}
+    <div class="mb-3">
+        <strong>Kembalian: Rp <span id="kembalian">0</span></strong>
+    </div>
+
+    {{-- SUBMIT --}}
+    <button type="submit" class="btn btn-success">
+
+        Bayar
 
     </button>
 
@@ -252,6 +284,36 @@ function refreshBarangOptions() {
         });
     });
 }
+
+// ================================
+// PEMBAYARAN: hitung kembalian & auto-fill non-cash
+// ================================
+function hitungKembalian() {
+    let totalAkhir = hitungTotalBelanja();
+    diskonTerpilih.forEach(function(d) {
+        totalAkhir -= hitungTotalBelanja() * (d.persentase / 100);
+    });
+
+    let metode = document.getElementById('metode-pembayaran').value;
+    let jumlahInput = document.getElementById('jumlah-dibayar');
+    let jumlahDibayar = parseInt(jumlahInput.value || 0);
+
+    if (metode && metode !== 'cash') {
+        // NON-CASH: auto-fill pas, readonly
+        jumlahInput.value = totalAkhir;
+        jumlahInput.readOnly = true;
+        jumlahDibayar = totalAkhir;
+    } else {
+        // CASH: bisa diketik manual
+        jumlahInput.readOnly = false;
+    }
+
+    let kembalian = jumlahDibayar - totalAkhir;
+    document.getElementById('kembalian').innerText = (kembalian > 0 ? kembalian : 0).toLocaleString('id-ID');
+}
+
+document.getElementById('metode-pembayaran').addEventListener('change', hitungKembalian);
+document.getElementById('jumlah-dibayar').addEventListener('input', hitungKembalian);
 
 // ================================
 // HITUNG ULANG SEMUA (total, diskon, total akhir)
@@ -403,6 +465,7 @@ document.addEventListener('change', function (e) {
         select.disabled = true;
 
         hitungUlang();
+        hitungKembalian();
     }
 });
 
@@ -486,6 +549,7 @@ document.addEventListener('click', function (e) {
         document.getElementById('total-akhir').innerText = totalAkhir.toLocaleString('id-ID');
 
         fetchDiskonEligible(total); // langsung fetch, tanpa debounce
+        hitungKembalian();
     }
 });
 
@@ -509,6 +573,26 @@ document.addEventListener('change', function (e) {
 // ================================
 document.querySelector('form').addEventListener('submit', function (e) {
     let form = e.target;
+    // VALIDASI: metode pembayaran wajib dipilih
+    let metode = document.getElementById('metode-pembayaran').value;
+    if (!metode) {
+        e.preventDefault();
+        alert('Pilih metode pembayaran terlebih dahulu.');
+        return;
+    }
+
+    // VALIDASI: jumlah dibayar cash gak boleh kurang
+    if (metode === 'cash') {
+        let jumlahDibayar = parseInt(document.getElementById('jumlah-dibayar').value || 0);
+        let kembalianText = document.getElementById('kembalian').innerText.replace(/\./g, '');
+        // cek ulang manual biar aman
+        let totalAkhirText = document.getElementById('total-akhir').innerText.replace(/\./g, '');
+        if (jumlahDibayar < parseInt(totalAkhirText)) {
+            e.preventDefault();
+            alert('Jumlah dibayar kurang dari total akhir.');
+            return;
+        }
+    }
 
     // VALIDASI: diskon tipe member tapi belum pilih member
     let belumLengkap = diskonTerpilih.find(d => d.tipe === 'member' && !d.member_id);

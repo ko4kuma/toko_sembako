@@ -86,6 +86,14 @@
             <p class="mb-0"><strong>Total Akhir:</strong> Rp {{ number_format($transaksi->total_akhir) }}</p>
         </div>
 
+        <hr>
+
+        <div class="mb-4">
+            <p class="mb-0"><strong>Metode Pembayaran:</strong> {{ ucfirst($transaksi->pembayaran->metode ?? '-') }}</p>
+            <p class="mb-0"><strong>Jumlah Dibayar:</strong> Rp {{ number_format($transaksi->pembayaran->jumlah ?? 0) }}</p>
+            <p class="mb-0"><strong>Kembalian:</strong> Rp {{ number_format($transaksi->pembayaran->kembalian ?? 0) }}</p>
+        </div>
+
     <a href="/transaksi"
        class="btn btn-secondary">
 
