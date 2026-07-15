@@ -31,45 +31,20 @@ class StokController extends Controller
             'jumlah' => 'required|integer|min:1',
         ]);
 
-        $stok = new Stok();
-        $stok->barang_id = $request->barang_id;
-        $stok->jumlah = $request->jumlah;
-        $stok->save();
+        $barang = Barang::findOrFail($request->barang_id);
+        $stokSebelum = $barang->stokTerkini();
+        $stokSesudah = $stokSebelum + $request->jumlah;
+
+        Stok::create([
+            'barang_id' => $barang->id,
+            'jumlah' => $request->jumlah,
+            'jenis' => 'masuk',
+            'stok_sebelum' => $stokSebelum,
+            'stok_sesudah' => $stokSesudah,
+            'keterangan' => $request->keterangan ?? null,
+]);
 
         return redirect()->route('stok.index')
             ->with('success', 'Stok berhasil ditambahkan.');
-    }
-
-    public function edit($id)
-    {
-        $stok = Stok::findOrFail($id);
-        $barang = Barang::all();
-
-        return view('stok.edit', compact('stok', 'barang'));
-    }
-
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'barang_id' => 'required|exists:barangs,id',
-            'jumlah' => 'required|integer|min:1',
-        ]);
-
-        $stok = Stok::findOrFail($id);
-        $stok->barang_id = $request->barang_id;
-        $stok->jumlah = $request->jumlah;
-        $stok->save();
-
-        return redirect()->route('stok.index')
-            ->with('success', 'Stok berhasil diupdate.');
-    }
-
-    public function destroy($id)
-    {
-        $stok = Stok::findOrFail($id);
-        $stok->delete();
-
-        return redirect()->route('stok.index')
-            ->with('success', 'Stok berhasil dihapus.');
     }
 }

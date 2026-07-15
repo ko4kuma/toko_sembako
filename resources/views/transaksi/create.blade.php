@@ -75,7 +75,7 @@
                         >
                             {{ $b->nama_barang }}
                             - Rp {{ number_format($b->harga) }}
-                            (Stok: {{ $b->stok->jumlah }})
+                            (Stok: {{ $b->stokTerkini() }})
                         </option>
 
                     @endforeach

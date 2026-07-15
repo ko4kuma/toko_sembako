@@ -20,7 +20,7 @@ Route::get('diskon/eligible', [DiskonController::class, 'eligible'])->name('disk
 Route::resource('diskon', DiskonController::class);
 
 Route::resource('pembayaran', PembayaranController::class);
-Route::resource('stok', StokController::class);
+Route::resource('stok', StokController::class)->only(['index', 'create', 'store']);
 
 Route::redirect('/', '/member');
 

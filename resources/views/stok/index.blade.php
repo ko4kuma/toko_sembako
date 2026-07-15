@@ -1,9 +1,9 @@
 @extends('layouts.app')
-@section('title', 'Daftar Stok')
+@section('title', 'Riwayat Pergerakan Stok')
 @section('content')
 
     <div class="container mt-4">
-        <h1 class="mb-4">Daftar Stok</h1>
+        <h1 class="mb-4">Riwayat Pergerakan Stok</h1>
         @if(session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
@@ -16,9 +16,14 @@
             <thead>
                 <tr>
                     <th width="60">No</th>
+                    <th>Tanggal</th>
                     <th>Barang</th>
-                    <th width="150">Jumlah</th>
-                    <th width="180">Aksi</th>
+                    <th>Jenis</th>
+                    <th width="120">Jumlah</th>
+                    <th>Stok Sebelum</th>
+                    <th>Stok Sesudah</th>
+                    <th>Referensi</th>
+                    <th>Keterangan</th>
                 </tr>
             </thead>
             <tbody>
@@ -27,39 +32,54 @@
                         <td class="text-muted">
                             {{ $i + 1 }}
                         </td>
+                        <td>
+                            {{ $s->created_at->format('d/m/Y H:i') }}
+                        </td>
 
                         <td class="fw-semibold">
                             {{ $s->barang->nama_barang }}
                         </td>
 
                         <td>
-                            <span ">
-                                {{ $s->jumlah }}
-                            </span>
+                            @if($s->jenis === 'masuk')
+                                <span class="badge bg-success">Masuk</span>
+                            @elseif($s->jenis === 'keluar')
+                                <span class="badge bg-danger">Keluar</span>
+                            @else
+                                <span class="badge bg-warning text-dark">Penyesuaian</span>
+                            @endif
                         </td>
 
                         <td>
-                            <a href="{{ route('stok.edit', $s->id) }}"
-                                class="btn btn-sm btn-warning me-1">
-                                Edit
-                            </a>
-
-                            <form action="{{ route('stok.destroy', $s->id) }}"
-                                    method="POST"
-                                    class="d-inline"
-                                    onsubmit="return confirm('Yakin ingin hapus data ini?')">
-                                @csrf
-                                @method('DELETE')
-
-                                <button class="btn btn-sm btn-danger">
-                                    Hapus
-                                </button>
-                            </form>
+                            {{ $s->jumlah }}
                         </td>
+
+                        <td>
+                            {{ $s->stok_sebelum }}
+                        </td>
+
+                        <td>
+                            {{ $s->stok_sesudah }}
+                        </td>
+
+                        <td>
+                            @if($s->referensi_type === \App\Models\Transaksi::class)
+                                <a href="{{ route('transaksi.detail', $s->referensi_id) }}">
+                                    Transaksi #{{ $s->referensi_id }}
+                                </a>
+                            @else
+                                Manual
+                            @endif
+                        </td>
+
+                        <td>
+                            {{ $s->keterangan ?? '-' }}
+                        </td>
+                        
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="text-center py-4 text-muted">
+                        <td colspan="9" class="text-center py-4 text-muted">
                             Belum ada data stok
                         </td>
                     </tr>
