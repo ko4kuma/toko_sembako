@@ -12,6 +12,7 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\StokController;
 use App\Http\Controllers\StokOpnameController;
+use App\Http\Controllers\PegawaiController;
 
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -30,6 +31,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('member/{member}/edit', [MemberController::class, 'edit'])->name('member.edit');
     Route::put('member/{member}', [MemberController::class, 'update'])->name('member.update');
     Route::delete('member/{member}', [MemberController::class, 'destroy'])->name('member.destroy');
+    Route::resource('pegawai', PegawaiController::class)->except('show');
 });
 
 Route::middleware(['auth', 'role:kasir,admin'])->group(function () {
