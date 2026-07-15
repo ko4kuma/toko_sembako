@@ -6,6 +6,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\DiskonController;
 use App\Http\Controllers\PembayaranController;
+use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\StokController;
@@ -20,13 +21,16 @@ Route::resource('kategori', KategoriController::class)->except('show');
 Route::get('diskon/eligible', [DiskonController::class, 'eligible'])->name('diskon.eligible');
 Route::resource('diskon', DiskonController::class);
 
-Route::resource('pembayaran', PembayaranController::class);
-Route::resource('stok', StokController::class)->only(['index', 'create', 'store']);
+// Route::resource('pembayaran', PembayaranController::class);
+Route::resource('stok', StokController::class)->only(['index']);
 
 Route::resource('stok-opname', StokOpnameController::class)->only(['index', 'create', 'store', 'destroy']);
 Route::get('stok-opname/{id}/isi', [StokOpnameController::class, 'isiDetail'])->name('stok-opname.isi');
 Route::post('stok-opname/{id}/simpan-detail', [StokOpnameController::class, 'simpanDetail'])->name('stok-opname.simpan-detail');
 Route::post('stok-opname/{id}/selesaikan', [StokOpnameController::class, 'selesaikan'])->name('stok-opname.selesaikan');
+
+Route::resource('pembelian', PembelianController::class)->only(['index', 'create', 'store']);
+Route::get('/pembelian/{id}/detail', [PembelianController::class, 'detail'])->name('pembelian.detail');
 
 Route::redirect('/', '/member');
 

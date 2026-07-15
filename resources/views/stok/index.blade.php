@@ -9,9 +9,6 @@
                 {{ session('success') }}
             </div>
         @endif
-        <a href="{{ route('stok.create') }}" class="btn btn-primary mb-3">
-            Tambah Stok
-        </a>
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
@@ -67,11 +64,18 @@
                                 <a href="{{ route('transaksi.detail', $s->referensi_id) }}">
                                     Transaksi #{{ $s->referensi_id }}
                                 </a>
+                            @elseif($s->referensi_type === \App\Models\Pembelian::class)
+                                <a href="{{ route('pembelian.detail', $s->referensi_id) }}">
+                                    Pembelian #{{ $s->referensi_id }}
+                                </a>
+                            @elseif($s->referensi_type === \App\Models\StokOpname::class)
+                                <a href="{{ route('stok-opname.isi', $s->referensi_id) }}">
+                                    Opname #{{ $s->referensi_id }}
+                                </a>
                             @else
                                 Manual
                             @endif
                         </td>
-
                         <td>
                             {{ $s->keterangan ?? '-' }}
                         </td>
