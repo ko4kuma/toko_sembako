@@ -1,15 +1,10 @@
 @extends('layouts.app')
-
+@section('title', 'Riwayat Penjualan')
 @section('content')
 
 <div class="container mt-4">
 
-    <a href="{{ route('transaksi.create') }}"
-       class="btn btn-primary mb-3">
-
-       Tambah Transaksi
-    </a>
-
+    <h1 class="mb-4">Riwayat Penjualan</h1>
     <table class="table table-bordered">
 
         <tr>
@@ -33,7 +28,7 @@
                 @endif
             </td>
             <td>{{ $t->tanggal }}</td>
-            <td>Rp {{ $t->total }}</td>
+            <td>Rp {{ $t->total_akhir }}</td>
 
             {{-- AKSI --}}
             <td>
@@ -44,26 +39,6 @@
                     Detail
 
                 </a>
-
-                <a href="{{ route('transaksi.edit', $t->id) }}"
-                   class="btn btn-warning btn-sm">
-
-                   Edit
-
-                </a>
-
-                <form action="{{ route('transaksi.destroy', $t->id) }}"
-                      method="POST"
-                      style="display:inline">
-
-                    @csrf
-                    @method('DELETE')
-
-                    <button class="btn btn-danger btn-sm">
-                        Hapus
-                    </button>
-
-                </form>
 
             </td>
 

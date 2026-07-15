@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('title', 'Detail Transaksi')
 @section('content')
 
 <div class="container mt-4">
@@ -26,8 +26,8 @@
         </tr>
 
         <tr>
-            <th>Total</th>
-            <td>Rp {{ number_format($transaksi->total) }}</td>
+            <th>Total Setelah Diskon</th>
+            <td>Rp {{ number_format($transaksi->total_akhir) }}</td>
         </tr>
 
     </table>
@@ -41,6 +41,8 @@
             <th>Harga</th>
             <th>Qty</th>
             <th>Subtotal</th>
+            <th>Diskon</th>
+            <th>Subtotal Akhir</th>
         </tr>
 
         @foreach($detail as $d)
@@ -57,15 +59,29 @@
             <td>
                 Rp {{ number_format($d->harga_satuan) }}
             </td>
-
+            
             {{-- QTY --}}
             <td>
                 {{ $d->qty }}
             </td>
-
+            
             {{-- SUBTOTAL --}}
             <td>
                 Rp {{ number_format($d->subtotal) }}
+            </td>
+            
+            {{-- NOMINAL DISKON --}}
+            <td>
+                @if($d->transaksi->diskon > 0)
+                    Rp {{ number_format($d->transaksi->diskon) }}
+                @else
+                    -
+                @endif
+            </td>
+
+            {{-- SUBTOTAL AKHIR --}}
+            <td>
+                Rp {{ number_format($d->transaksi->total_akhir) }}
             </td>
 
         </tr>

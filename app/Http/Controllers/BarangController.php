@@ -42,7 +42,7 @@ class BarangController extends Controller
 
         Barang::create($validated);
 
-        return redirect()->route('barang.index')->with('success', 'Barang berhasil ditambahkan');
+        return redirect()->route('barang.index')->with('success', 'Barang berhasil ditambahkan, silahkan tambahkan stok barang di menu Stok -> Daftar Stok');
  
     }
 
