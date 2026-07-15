@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Diskon;
-use App\Models\Transaksi;
+use App\Models\TransaksiDiskon;
 use Illuminate\Http\Request;
 
 class DiskonController extends Controller
@@ -29,7 +29,6 @@ class DiskonController extends Controller
             'persentase' => 'required|numeric|min:0|max:100',
             'berlaku_mulai' => 'nullable|date|after_or_equal:today',
             'berlaku_sampai' => 'nullable|date|after_or_equal:berlaku_mulai',
-            'aktif' => 'required|in:0,1',
         ]);
 
         Diskon::create([
@@ -39,7 +38,7 @@ class DiskonController extends Controller
             'persentase' => $request->persentase,
             'berlaku_mulai' => $request->berlaku_mulai,
             'berlaku_sampai' => $request->berlaku_sampai,
-            'aktif' => $request->aktif,
+            'aktif' => true,
         ]);
 
         return redirect()->route('diskon.index')
@@ -79,14 +78,21 @@ class DiskonController extends Controller
         return redirect()->route('diskon.index')
             ->with('success', 'Diskon berhasil diupdate.');
     }
+    public function eligible(Request $request)
+    {
+        $total = $request->query('total', 0);
 
+        $diskon = Diskon::aktifSaatIni()
+            ->where('syarat_minimal', '<=', $total)
+            ->get();
+
+        return response()->json($diskon);
+    }
     public function destroy($id)
     {
         $diskon = Diskon::findOrFail($id);
-        // cek apakah diskon pernah terpakai di transaksi
-        $terpakai = Transaksi::where('diskon_member_id', $id)
-            ->orWhere('diskon_umum_id', $id)
-            ->exists();
+        // cek apakah diskon pernah terpakai di transaksidiskon
+        $terpakai = TransaksiDiskon::where('diskon_id', $id)->exists();
 
         if ($terpakai) {
             return back()->with('error',

@@ -11,7 +11,13 @@
 
         <tr>
             <th width="200">Nama Member</th>
-            <td>{{ $transaksi->member->nama_member }}</td>
+            <td>
+                @if($transaksi->member)
+                    {{ $transaksi->member->nama_member }}
+                @else
+                    Non Member
+                @endif
+            </td>
         </tr>
 
         <tr>

@@ -23,10 +23,12 @@ class Diskon extends Model
     {
         return $query->where('aktif', true)
             ->where(function ($q) {
-                $q->whereNull('berlaku_mulai')->orWhere('berlaku_mulai', '<=', now());
+                $q->whereNull('berlaku_mulai')
+                ->orWhereDate('berlaku_mulai', '<=', today());
             })
             ->where(function ($q) {
-                $q->whereNull('berlaku_sampai')->orWhere('berlaku_sampai', '>=', now());
+                $q->whereNull('berlaku_sampai')
+                ->orWhereDate('berlaku_sampai', '>=', today());
             });
     }
 }

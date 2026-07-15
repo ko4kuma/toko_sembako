@@ -40,7 +40,16 @@ class MemberController extends Controller
 
         return redirect()->route('member.index');
     }
+    public function search(Request $request)
+    {
+        $keyword = $request->query('q');
 
+        $member = Member::where('no_hp', 'like', '%'.$keyword.'%')
+            ->limit(10)
+            ->get(['id', 'nama_member', 'no_hp']);
+
+        return response()->json($member);
+    }
     public function destroy($id)
     {
         $member = Member::findOrFail($id);
