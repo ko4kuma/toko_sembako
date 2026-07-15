@@ -31,6 +31,7 @@
                     </a>
                     <div class="collapse ms-3" id="masterDataMenu" data-bs-parent="#sidebarAccordion">
                         <ul class="nav flex-column">
+                            <li><a class="nav-link icon-link text-dark" href="{{ route('pegawai.index') }}"> Pegawai</a></li>
                             <li><a class="nav-link icon-link text-dark" href="{{ route('kategori.index') }}"> Kategori Barang</a></li>
                             <li><a class="nav-link icon-link text-dark" href="{{ route('supplier.index') }}"> Supplier</a></li>
                             <li><a class="nav-link icon-link text-dark" href="{{ route('barang.index') }}"> Barang</a></li>
