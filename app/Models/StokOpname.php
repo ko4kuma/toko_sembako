@@ -12,7 +12,10 @@ class StokOpname extends Model
         'keterangan',
         'status',
     ];
-
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
     public function detail()
     {
         return $this->hasMany(StokOpnameDetail::class);

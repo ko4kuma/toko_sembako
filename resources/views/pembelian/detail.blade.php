@@ -4,7 +4,7 @@
 
 <div class="container mt-4">
 
-    <h1 class="mb-4">Detail Penjualan</h1>
+    <h1 class="mb-4">Detail Pembelian</h1>
 
     {{-- INFO PEMBELIAN --}}
     <table class="table table-bordered mb-4">
@@ -28,6 +28,10 @@
         <tr>
             <th>Total</th>
             <td>Rp {{ number_format($pembelian->total) }}</td>
+        </tr>
+        <tr>
+            <th>Dicatat Oleh</th>
+            <td>{{ $pembelian->user->name ?? '-' }}</td>
         </tr>
 
     </table>

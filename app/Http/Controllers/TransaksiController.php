@@ -101,6 +101,7 @@ class TransaksiController extends Controller
         $totalAkhir = $total - $totalDiskon;
         // SIMPAN TRANSAKSI
         $transaksi = Transaksi::create([
+            'user_id' => auth()->id(),
             'member_id' => $request->member_id,
             'tanggal' => $request->tanggal,
             'total' => $total,
@@ -291,7 +292,7 @@ class TransaksiController extends Controller
     // =========================
     public function detail($id)
     {
-        $transaksi = Transaksi::with(['member', 'pembayaran'])->findOrFail($id);
+        $transaksi = Transaksi::with(['member', 'pembayaran', 'user'])->findOrFail($id);
 
         $detail = DetailTransaksi::with('barang')
                     ->where('transaksi_id',$id)
