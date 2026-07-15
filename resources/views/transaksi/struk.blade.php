@@ -40,6 +40,9 @@
             .btn-print {
                 display: none;
             }
+        @page {
+            margin: 0;
+        }
         }
     </style>
 </head>
@@ -95,6 +98,12 @@
     </p>
     <p><b>Total Akhir:</b> Rp {{ number_format($transaksi->total_akhir) }}</p>
 
+    <hr>
+
+    <p><b>Metode:</b> {{ ucfirst($transaksi->pembayaran->metode ?? '-') }}</p>
+    <p><b>Dibayar:</b> Rp {{ number_format($transaksi->pembayaran->jumlah ?? 0) }}</p>
+    <p><b>Kembalian:</b> Rp {{ number_format($transaksi->pembayaran->kembalian ?? 0) }}</p>
+    
     <br>
 
     <button onclick="window.print()" class="btn-print">

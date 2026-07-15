@@ -1,9 +1,9 @@
 @extends('layouts.app')
-@section('title', 'Riwayat Pergerakan Stok')
+@section('title', 'Pergerakan Stok')
 @section('content')
 
     <div class="container mt-4">
-        <h1 class="mb-4">Riwayat Pergerakan Stok</h1>
+        <h1 class="mb-4">Pergerakan Stok</h1>
         @if(session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
