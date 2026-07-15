@@ -6,13 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Member;
 use App\Models\DetailTransaksi;
 use App\Models\Pembayaran;
+use App\Models\TransaksiDiskon;
 
 class Transaksi extends Model
 {
      protected $fillable = [
         'member_id',
         'tanggal',
-        'total'
+        'total',
+        'diskon',
+        'total_akhir',
     ];
 
     public function member(){
@@ -23,5 +26,8 @@ class Transaksi extends Model
     }
     public function pembayaran(){
         return $this->hasMany(Pembayaran::class);
+    }
+    public function transaksiDiskon(){
+        return $this->hasMany(TransaksiDiskon::class);
     }
 }

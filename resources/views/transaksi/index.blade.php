@@ -25,7 +25,13 @@
         <tr>
 
             <td>{{ $loop->iteration }}</td>
-            <td>{{ $t->member->nama_member }}</td>
+            <td>
+                @if($t->member)
+                    {{ $t->member->nama_member }}
+                @else
+                    Non Member
+                @endif
+            </td>
             <td>{{ $t->tanggal }}</td>
             <td>Rp {{ $t->total }}</td>
 

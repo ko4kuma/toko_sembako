@@ -7,6 +7,8 @@ use App\Models\Transaksi;
 use App\Models\DetailTransaksi;
 use App\Models\Member;
 use App\Models\Barang;
+use App\Models\Diskon;
+use App\Models\TransaksiDiskon;
 
 class TransaksiController extends Controller
 {
@@ -38,12 +40,14 @@ class TransaksiController extends Controller
     {
         // VALIDASI
         $request->validate([
-            'member_id' => 'required',
+            'member_id' => 'nullable|exists:members,id',
             'tanggal' => 'required|date',
             'barang_id' => 'required|array',
             'barang_id.*' => 'required',
             'qty' => 'required|array',
             'qty.*' => 'required|numeric|min:1',
+            'diskon_ids' => 'nullable|array',
+            'diskon_ids.*' => 'exists:diskons,id',
         ]);
 
         $total = 0;
@@ -65,14 +69,48 @@ class TransaksiController extends Controller
 
             $total += $barang->harga * $qty;
         }
+        // AMBIL & VALIDASI DISKON YANG DIPILIH
+        $diskonIds = $request->diskon_ids ?? [];
+        $diskonList = Diskon::whereIn('id', $diskonIds)->aktifSaatIni()->get();
 
+        $totalDiskon = 0;
+        $adaDiskonMember = false;
+
+        foreach ($diskonList as $d) {
+            // CEK APAKAH SYARAT MINIMAL TERPENUHI (validasi ulang di server, jangan percaya frontend)
+            if ($total < $d->syarat_minimal) {
+                return back()->with('error', 'Total belanja belum memenuhi syarat diskon "'.$d->nama_diskon.'"');
+            }
+
+            if ($d->tipe === 'member') {
+                $adaDiskonMember = true;
+            }
+
+            $totalDiskon += $total * ($d->persentase / 100);
+        }
+
+        // KALAU ADA DISKON TIPE MEMBER, MEMBER_ID WAJIB ADA
+        if ($adaDiskonMember && !$request->member_id) {
+            return back()->with('error', 'Pilih member terlebih dahulu untuk menggunakan diskon member.');
+        }
+
+        $totalAkhir = $total - $totalDiskon;
         // SIMPAN TRANSAKSI
         $transaksi = Transaksi::create([
             'member_id' => $request->member_id,
             'tanggal' => $request->tanggal,
-            'total' => $total
+            'total' => $total,
+            'diskon' => $totalDiskon,
+            'total_akhir' => $totalAkhir,
         ]);
-
+        // SIMPAN RINCIAN DISKON YANG DIPAKAI
+        foreach ($diskonList as $d) {
+            TransaksiDiskon::create([
+                'transaksi_id' => $transaksi->id,
+                'diskon_id' => $d->id,
+                'nominal_diskon' => $total * ($d->persentase / 100),
+            ]);
+        }
         // SIMPAN DETAIL
         foreach($request->barang_id as $key => $barangId)
         {
@@ -119,10 +157,12 @@ class TransaksiController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'member_id' => 'required',
+            'member_id' => 'nullable|exists:members,id',
             'tanggal' => 'required|date',
             'barang_id' => 'required|array',
             'qty' => 'required|array',
+            'diskon_ids' => 'nullable|array',
+            'diskon_ids.*' => 'exists:diskons,id',
         ]);
 
         $transaksi = Transaksi::findOrFail($id);

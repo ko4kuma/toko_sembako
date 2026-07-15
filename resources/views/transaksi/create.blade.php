@@ -35,29 +35,6 @@
 
     @csrf
 
-    {{-- MEMBER --}}
-    <div class="mb-3">
-
-        <label class="form-label">Member</label>
-
-        <select name="member_id"
-                class="form-control"
-                required>
-
-            <option value="">-- Pilih Member --</option>
-
-            @foreach($member as $m)
-
-                <option value="{{ $m->id }}">
-                    {{ $m->nama_member }}
-                </option>
-
-            @endforeach
-
-        </select>
-
-    </div>
-
     {{-- TANGGAL --}}
     <div class="mb-3">
 
@@ -92,12 +69,13 @@
 
                     @foreach($barang as $b)
 
-                        <option value="{{ $b->id }}">
-
+                        <option
+                            value="{{ $b->id }}"
+                            data-harga="{{ $b->harga }}"
+                        >
                             {{ $b->nama_barang }}
                             - Rp {{ number_format($b->harga) }}
                             (Stok: {{ $b->stok->jumlah }})
-
                         </option>
 
                     @endforeach
@@ -145,7 +123,31 @@
     </button>
 
     <br>
+    <hr>
 
+    <h5>Diskon</h5>
+
+    {{-- TOTAL BELANJA (tampilan aja, dihitung via JS) --}}
+    <div class="mb-3">
+        <strong>Total Belanja: Rp <span id="total-belanja">0</span></strong>
+    </div>
+
+    {{-- WRAPPER DISKON --}}
+    <div id="diskon-wrapper">
+        {{-- Item diskon akan ditambahin di sini lewat JS --}}
+    </div>
+
+    <button type="button" class="btn btn-info mb-3" id="tambah-diskon">
+        + Tambah Diskon
+    </button>
+
+    <div class="mb-3">
+        <strong>Total Diskon: Rp <span id="total-diskon">0</span></strong>
+    </div>
+
+    <div class="mb-3">
+        <strong>Total Akhir: Rp <span id="total-akhir">0</span></strong>
+    </div>
     {{-- SUBMIT --}}
     <button type="submit"
             class="btn btn-success">
@@ -196,6 +198,324 @@ document.addEventListener('click', function(e){
 
 });
 
+// ================================
+// STATE DISKON YANG DIPILIH
+// ================================
+let diskonTerpilih = []; // [{diskon_id, tipe, persentase, nama, member_id}]
+let diskonEligibleCache = [];
+let semuaDiskon = [];
+
+// ================================
+// HITUNG TOTAL BELANJA
+// ================================
+function hitungTotalBelanja() {
+    let total = 0;
+
+    document.querySelectorAll('.barang-item').forEach(function(item) {
+        let select = item.querySelector('select[name="barang_id[]"]');
+        let qtyInput = item.querySelector('input[name="qty[]"]');
+
+        if (select.value && qtyInput.value) {
+            let selectedOption = select.options[select.selectedIndex];
+            let harga = parseInt(selectedOption.dataset.harga || 0);
+            let qty = parseInt(qtyInput.value || 0);
+            total += harga * qty;
+        }
+    });
+
+    return total;
+}
+
+// ================================
+// HITUNG ULANG SEMUA (total, diskon, total akhir)
+// ================================
+
+let diskonTimeout = null;
+function hitungUlang() {
+    let total = hitungTotalBelanja();
+    document.getElementById('total-belanja').innerText = total.toLocaleString('id-ID');
+
+    let totalDiskon = 0;
+    diskonTerpilih.forEach(function(d) {
+        totalDiskon += total * (d.persentase / 100);
+    });
+
+    let totalAkhir = total - totalDiskon;
+
+    document.getElementById('total-diskon').innerText = totalDiskon.toLocaleString('id-ID');
+    document.getElementById('total-akhir').innerText = totalAkhir.toLocaleString('id-ID');
+
+    // REFRESH LIST DISKON ELIGIBLE TIAP TOTAL BERUBAH
+    clearTimeout(diskonTimeout);
+
+    diskonTimeout =
+        setTimeout(function () {
+
+            fetchDiskonEligible(total);
+
+        }, 300);
+}
+
+function fetchDiskonEligible(total) {
+
+    // AMBIL DARI SERVER SEKALI SAJA
+    if (semuaDiskon.length === 0) {
+
+        fetch(`/diskon/eligible?total=${total}`)
+            .then(res => res.json())
+            .then(data => {
+
+                semuaDiskon = data;
+
+                diskonEligibleCache =
+                    semuaDiskon.filter(function (d) {
+
+                        return total >= d.syarat_minimal;
+
+                    });
+
+            });
+
+        return;
+    }
+
+    // FILTER LANGSUNG DARI CACHE
+    diskonEligibleCache =
+        semuaDiskon.filter(function (d) {
+
+            return total >= d.syarat_minimal;
+
+        });
+
+}
+
+// ================================
+// RENDER SELECT PILIHAN DISKON (yang belum dipilih aja)
+// ================================
+function getOptionsDiskonBelumDipilih() {
+    let idsTerpilih = diskonTerpilih.map(d => d.diskon_id);
+
+    return diskonEligibleCache
+        .filter(d => !idsTerpilih.includes(d.id))
+        .map(d => `<option value="${d.id}" data-tipe="${d.tipe}" data-persentase="${d.persentase}" data-nama="${d.nama_diskon}">${d.nama_diskon} (${d.persentase}%)</option>`)
+        .join('');
+}
+
+// ================================
+// TOMBOL "+ TAMBAH DISKON"
+// ================================
+document.getElementById('tambah-diskon').addEventListener('click', function () {
+    let options = getOptionsDiskonBelumDipilih();
+
+    if (!options) {
+        alert('Tidak ada diskon lain yang bisa ditambahkan.');
+        return;
+    }
+
+    let wrapper = document.getElementById('diskon-wrapper');
+
+    let div = document.createElement('div');
+    div.classList.add('row', 'mb-2', 'diskon-item', 'align-items-center');
+
+    div.innerHTML = `
+        <div class="col-md-5">
+            <select class="form-control pilih-diskon">
+                <option value="">-- Pilih Diskon --</option>
+                ${options}
+            </select>
+        </div>
+        <div class="col-md-5 member-search-wrapper" style="display:none;">
+            <input type="text" class="form-control cari-member" placeholder="Ketik no HP member...">
+            <div class="list-group hasil-member" style="position:absolute; z-index:10;"></div>
+        </div>
+        <div class="col-md-2">
+            <button type="button" class="btn btn-danger btn-sm remove-diskon">Hapus</button>
+        </div>
+    `;
+
+    wrapper.appendChild(div);
+});
+
+// ================================
+// SAAT PILIH DISKON DARI SELECT
+// ================================
+document.addEventListener('change', function (e) {
+    if (e.target.classList.contains('pilih-diskon')) {
+        let select = e.target;
+        let selectedOption = select.options[select.selectedIndex];
+        let item = select.closest('.diskon-item');
+        let memberWrapper = item.querySelector('.member-search-wrapper');
+
+        if (!select.value) {
+            memberWrapper.style.display = 'none';
+            return;
+        }
+
+        let diskonId = select.value;
+        let tipe = selectedOption.dataset.tipe;
+        let persentase = parseFloat(selectedOption.dataset.persentase);
+        let nama = selectedOption.dataset.nama;
+
+        // TAMPILIN SEARCH BOX MEMBER KALAU TIPE-NYA MEMBER
+        if (tipe === 'member') {
+            memberWrapper.style.display = 'block';
+        } else {
+            memberWrapper.style.display = 'none';
+        }
+
+        // SIMPAN KE STATE (member_id null dulu kalau tipe member, nunggu dipilih)
+        diskonTerpilih.push({
+            diskon_id: parseInt(diskonId),
+            tipe: tipe,
+            persentase: persentase,
+            nama: nama,
+            member_id: null
+        });
+
+        // KUNCI SELECT INI biar gak bisa diganti-ganti sembarangan (opsional, tapi lebih aman)
+        select.disabled = true;
+
+        hitungUlang();
+    }
+});
+
+// ================================
+// SEARCH BOX MEMBER (ketik no HP)
+// ================================
+document.addEventListener('input', function (e) {
+    if (e.target.classList.contains('cari-member')) {
+        let input = e.target;
+        let keyword = input.value;
+        let item = input.closest('.diskon-item');
+        let hasilBox = item.querySelector('.hasil-member');
+
+        if (keyword.length < 3) {
+            hasilBox.innerHTML = '';
+            return;
+        }
+
+        fetch(`/member/search?q=${keyword}`)
+            .then(res => res.json())
+            .then(data => {
+                hasilBox.innerHTML = data.map(m =>
+                    `<button type="button" class="list-group-item list-group-item-action pilih-member-hasil" data-id="${m.id}" data-nama="${m.nama_member}">${m.nama_member} - ${m.no_hp}</button>`
+                ).join('');
+            });
+    }
+});
+
+// ================================
+// SAAT PILIH MEMBER DARI HASIL PENCARIAN
+// ================================
+document.addEventListener('click', function (e) {
+    if (e.target.classList.contains('pilih-member-hasil')) {
+        let btn = e.target;
+        let item = btn.closest('.diskon-item');
+        let memberWrapper = item.querySelector('.member-search-wrapper');
+        let memberId = btn.dataset.id;
+        let memberNama = btn.dataset.nama;
+
+        // GANTI SEARCH BOX JADI READONLY ABU-ABU
+        memberWrapper.innerHTML = `
+            <input type="text" class="form-control" value="${memberNama}" readonly style="background-color:#e9ecef;">
+        `;
+
+        // UPDATE STATE: isi member_id ke diskon yang lagi diproses
+        // (asumsi 1 diskon-item cuma bisa 1 diskon tipe member aktif dalam satu waktu)
+        let select = item.querySelector('.pilih-diskon');
+        let diskonId = select.value;
+
+        let target = diskonTerpilih.find(d => d.diskon_id === parseInt(diskonId));
+        if (target) {
+            target.member_id = memberId;
+        }
+    }
+});
+
+// ================================
+// HAPUS DISKON YANG DIPILIH
+// ================================
+document.addEventListener('click', function (e) {
+    if (e.target.classList.contains('remove-diskon')) {
+        let item = e.target.closest('.diskon-item');
+        let select = item.querySelector('.pilih-diskon');
+        let diskonId = select.value;
+
+        // HAPUS DARI STATE
+        diskonTerpilih = diskonTerpilih.filter(d => d.diskon_id !== parseInt(diskonId));
+
+        item.remove();
+        
+        let total = hitungTotalBelanja();
+        document.getElementById('total-belanja').innerText = total.toLocaleString('id-ID');
+
+        let totalDiskon = 0;
+        diskonTerpilih.forEach(function(d) {
+            totalDiskon += total * (d.persentase / 100);
+        });
+        let totalAkhir = total - totalDiskon;
+
+        document.getElementById('total-diskon').innerText = totalDiskon.toLocaleString('id-ID');
+        document.getElementById('total-akhir').innerText = totalAkhir.toLocaleString('id-ID');
+
+        fetchDiskonEligible(total); // langsung fetch, tanpa debounce
+    }
+});
+
+// ================================
+// RECALCULATE TIAP KALI QTY/BARANG BERUBAH
+// ================================
+document.addEventListener('input', function (e) {
+    if (e.target.matches('input[name="qty[]"]')) {
+        hitungUlang();
+    }
+});
+
+document.addEventListener('change', function (e) {
+    if (e.target.matches('select[name="barang_id[]"]')) {
+        hitungUlang();
+    }
+});
+// ================================
+// SEBELUM SUBMIT: masukin diskon_ids[] dan member_id ke form via hidden input
+// ================================
+document.querySelector('form').addEventListener('submit', function (e) {
+    let form = e.target;
+
+    // VALIDASI: diskon tipe member tapi belum pilih member
+    let belumLengkap = diskonTerpilih.find(d => d.tipe === 'member' && !d.member_id);
+    if (belumLengkap) {
+        e.preventDefault();
+        alert('Pilih member terlebih dahulu untuk diskon "' + belumLengkap.nama + '"');
+        return;
+    }
+
+    // HAPUS hidden input lama (jaga-jaga kalau submit gagal & dicoba lagi)
+    form.querySelectorAll('input[name="diskon_ids[]"], input[name="member_id"]').forEach(el => el.remove());
+
+    // TAMBAHIN hidden input diskon_ids[]
+    diskonTerpilih.forEach(function (d) {
+        let hidden = document.createElement('input');
+        hidden.type = 'hidden';
+        hidden.name = 'diskon_ids[]';
+        hidden.value = d.diskon_id;
+        form.appendChild(hidden);
+    });
+
+    // TAMBAHIN hidden input member_id (ambil dari diskon tipe member yang kepilih, kalau ada)
+    let diskonMember = diskonTerpilih.find(d => d.tipe === 'member');
+    if (diskonMember) {
+        let hiddenMember = document.createElement('input');
+        hiddenMember.type = 'hidden';
+        hiddenMember.name = 'member_id';
+        hiddenMember.value = diskonMember.member_id;
+        form.appendChild(hiddenMember);
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    hitungUlang();
+});
 </script>
 
 @endsection

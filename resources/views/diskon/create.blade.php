@@ -64,14 +64,14 @@
                                        name="berlaku_mulai"
                                        class="form-control"
                                        min="{{ now()->toDateString() }}"
-                                       value="{{ ('berlaku_mulai') }}"
+                                       value="{{ old('berlaku_mulai') }}"
                                >
                                <span>sampai</span>
                                <input type="date"
                                       name="berlaku_sampai"
                                       class="form-control"
                                       min="{{ now()->toDateString() }}"
-                                      value="{{ ('berlaku_sampai') }}"
+                                      value="{{ old('berlaku_sampai') }}"
                               >
 
                             </div>
