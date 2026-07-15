@@ -40,7 +40,7 @@
                 <div class="collapse ms-3" id="stokMenu" data-bs-parent="#sidebarAccordion">
                     <ul class="nav flex-column">
                         <li><a class="nav-link icon-link text-dark" href="{{ route('stok.index') }}">Pergerakan Stok</a></li>
-                        <li><a class="nav-link icon-link text-dark" href="#"> Stok Opname</a></li>
+                        <li><a class="nav-link icon-link text-dark" href="{{ route('stok-opname.index') }}"> Stok Opname</a></li>
                     </ul>
                 </div>
             </li>

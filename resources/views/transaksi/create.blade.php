@@ -43,6 +43,7 @@
         <input type="date"
                name="tanggal"
                class="form-control"
+               value="{{ old('tanggal', now()->toDateString()) }}"
                required>
 
     </div>

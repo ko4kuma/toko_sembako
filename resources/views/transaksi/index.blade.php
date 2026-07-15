@@ -30,7 +30,7 @@
             <td>{{ $t->tanggal }}</td>
             <td>Rp {{ $t->total_akhir }}</td>
 
-            {{-- AKSI --}}
+
             <td>
 
                 <a href="{{ route('transaksi.detail', $t->id) }}"
