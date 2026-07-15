@@ -14,9 +14,23 @@ use App\Http\Controllers\StokController;
 use App\Http\Controllers\StokOpnameController;
 
 
+Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
+
+    return redirect()->route('login');
+});
+
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard.index');
+    })->name('dashboard');
+});
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('barang', BarangController::class)->except('show');
@@ -53,8 +67,5 @@ Route::middleware(['auth', 'role:gudang'])->group(function () {
     Route::post('stok-opname/{id}/simpan-detail', [StokOpnameController::class, 'simpanDetail'])->name('stok-opname.simpan-detail');
     Route::post('stok-opname/{id}/selesaikan', [StokOpnameController::class, 'selesaikan'])->name('stok-opname.selesaikan');
 });
-
-Route::redirect('/', '/login');
-
 
 
