@@ -14,11 +14,16 @@ class PembelianController extends Controller
     // =========================
     // TAMPIL RIWAYAT PEMBELIAN
     // =========================
+    
     public function index()
     {
-        $pembelian = Pembelian::with(['supplier', 'user'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $query = Pembelian::with(['supplier', 'user']);
+
+        if (auth()->user()->role !== 'admin') {
+            $query->where('user_id', auth()->id());
+        }
+
+        $pembelian = $query->orderBy('created_at', 'desc')->get();
 
         return view('pembelian.index', compact('pembelian'));
     }
@@ -101,13 +106,17 @@ class PembelianController extends Controller
     // DETAIL PEMBELIAN
     // =========================
     public function detail($id)
-    {
-        $pembelian = Pembelian::with(['supplier', 'user'])->findOrFail($id);
+        {
+            $pembelian = Pembelian::with(['supplier', 'user'])->findOrFail($id);
 
-        $detail = DetailPembelian::with('barang')
-                    ->where('pembelian_id', $id)
-                    ->get();
+            if (auth()->user()->role !== 'admin' && $pembelian->user_id !== auth()->id()) {
+                abort(403, 'Anda tidak memiliki akses ke pembelian ini.');
+            }
 
-        return view('pembelian.detail', compact('pembelian', 'detail'));
-    }
+            $detail = DetailPembelian::with('barang')
+                        ->where('pembelian_id', $id)
+                        ->get();
+
+            return view('pembelian.detail', compact('pembelian', 'detail'));
+        }
 }

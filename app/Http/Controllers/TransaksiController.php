@@ -19,9 +19,13 @@ class TransaksiController extends Controller
     // =========================
     public function index()
     {
-        $transaksi = Transaksi::with(['member','user'])
-            ->orderBy('created_at', 'desc')
-            ->get();;
+        $query = Transaksi::with(['member', 'user']);
+
+        if (auth()->user()->role !== 'admin') {
+            $query->where('user_id', auth()->id());
+        }
+
+        $transaksi = $query->orderBy('created_at', 'desc')->get();
 
         return view('transaksi.index', compact('transaksi'));
     }
@@ -295,6 +299,10 @@ class TransaksiController extends Controller
     {
         $transaksi = Transaksi::with(['member', 'pembayaran', 'user'])->findOrFail($id);
 
+        if (auth()->user()->role !== 'admin' && $transaksi->user_id !== auth()->id()) {
+            abort(403, 'Anda tidak memiliki akses ke transaksi ini.');
+        }
+
         $detail = DetailTransaksi::with('barang')
                     ->where('transaksi_id',$id)
                     ->get();
@@ -309,6 +317,10 @@ class TransaksiController extends Controller
     {
         $transaksi = Transaksi::with(['member', 'pembayaran'])
                 ->findOrFail($id);
+
+        if (auth()->user()->role !== 'admin' && $transaksi->user_id !== auth()->id()) {
+            abort(403, 'Anda tidak memiliki akses ke transaksi ini.');
+        }
 
         $detail = DetailTransaksi::with('barang')
                     ->where('transaksi_id', $id)

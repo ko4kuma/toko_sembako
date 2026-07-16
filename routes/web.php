@@ -49,6 +49,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('pegawai', PegawaiController::class)->except('show');
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     Route::get('/laporan/print', [LaporanController::class, 'print'])->name('laporan.print');
+    Route::post('/stok-opname/{id}/approve', [StokOpnameController::class, 'approve'])->name('stok-opname.approve');
+    Route::post('/stok-opname/{id}/reject', [StokOpnameController::class, 'reject'])->name('stok-opname.reject');
 });
 
 Route::middleware(['auth', 'role:kasir,admin'])->group(function () {
@@ -72,7 +74,7 @@ Route::middleware(['auth', 'role:gudang'])->group(function () {
     Route::resource('stok-opname', StokOpnameController::class)->only(['index', 'create', 'store', 'destroy']);
     Route::get('stok-opname/{id}/isi', [StokOpnameController::class, 'isiDetail'])->name('stok-opname.isi');
     Route::post('stok-opname/{id}/simpan-detail', [StokOpnameController::class, 'simpanDetail'])->name('stok-opname.simpan-detail');
-    Route::post('stok-opname/{id}/selesaikan', [StokOpnameController::class, 'selesaikan'])->name('stok-opname.selesaikan');
+    Route::post('stok-opname/{id}/ajukan', [StokOpnameController::class, 'ajukan'])->name('stok-opname.ajukan');
 });
 
 
