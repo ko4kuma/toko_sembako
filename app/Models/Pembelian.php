@@ -9,6 +9,7 @@ use App\Models\DetailPembelian;
 class Pembelian extends Model
 {
     protected $fillable = [
+        'user_id',
         'supplier_id',
         'tanggal',
         'total',

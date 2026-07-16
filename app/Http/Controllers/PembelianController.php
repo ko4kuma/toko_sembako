@@ -16,7 +16,7 @@ class PembelianController extends Controller
     // =========================
     public function index()
     {
-        $pembelian = Pembelian::with('supplier')
+        $pembelian = Pembelian::with(['supplier', 'user'])
             ->orderBy('created_at', 'desc')
             ->get();
 

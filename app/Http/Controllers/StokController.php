@@ -11,7 +11,7 @@ class StokController extends Controller
     public function index()
     {
         $stok = Stok::with('barang')
-            ->orderBy('created_at', 'asc')
+            ->orderBy('created_at', 'desc')
             ->get();
 
         return view('stok.index', compact('stok'));

@@ -56,6 +56,8 @@ Route::middleware(['auth', 'role:kasir,admin'])->group(function () {
     Route::get('member/search', [MemberController::class, 'search'])->name('member.search');
     Route::get('member/create', [MemberController::class, 'create'])->name('member.create');
     Route::post('member', [MemberController::class, 'store'])->name('member.store');
+    // Kasir boleh cek eligibilitas diskon saat transaksi
+    Route::get('diskon/eligible', [DiskonController::class, 'eligible'])->name('diskon.eligible');
 });
 
 Route::middleware(['auth', 'role:purchasing,admin'])->group(function () {

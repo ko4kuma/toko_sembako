@@ -19,7 +19,9 @@ class TransaksiController extends Controller
     // =========================
     public function index()
     {
-        $transaksi = Transaksi::with('member')->get();
+        $transaksi = Transaksi::with(['member','user'])
+            ->orderBy('created_at', 'desc')
+            ->get();;
 
         return view('transaksi.index', compact('transaksi'));
     }
@@ -55,7 +57,6 @@ class TransaksiController extends Controller
         ]);
 
         $total = 0;
-
         // HITUNG TOTAL + CEK STOK
         foreach($request->barang_id as $key => $barangId)
         {
@@ -169,7 +170,7 @@ class TransaksiController extends Controller
             'jumlah' => $jumlahDibayar,
             'kembalian' => $kembalian,
         ]);
-
+        
         return redirect()->route('transaksi.create')
             ->with('success','Transaksi berhasil!');
     }
