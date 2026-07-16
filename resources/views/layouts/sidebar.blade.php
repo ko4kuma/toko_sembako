@@ -81,6 +81,14 @@
                     </div>
                 </li>
                 @endif
+                {{-- Laporan --}}
+                @if(auth()->user()->role === 'admin')
+                <li class="nav-item">
+                    <a class="nav-link text-dark d-flex align-items-center gap-1" href="{{ route('laporan.index') }}">
+                        <i class="bi bi-file-earmark-text"></i> Laporan
+                    </a>
+                </li>
+                @endif
 
                 <hr>
 

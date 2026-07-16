@@ -13,6 +13,7 @@ use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\StokController;
 use App\Http\Controllers\StokOpnameController;
 use App\Http\Controllers\PegawaiController;
+use App\Http\Controllers\LaporanController;
 
 
 Route::get('/', function () {
@@ -46,6 +47,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::put('member/{member}', [MemberController::class, 'update'])->name('member.update');
     Route::delete('member/{member}', [MemberController::class, 'destroy'])->name('member.destroy');
     Route::resource('pegawai', PegawaiController::class)->except('show');
+    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+    Route::get('/laporan/print', [LaporanController::class, 'print'])->name('laporan.print');
 });
 
 Route::middleware(['auth', 'role:kasir,admin'])->group(function () {
