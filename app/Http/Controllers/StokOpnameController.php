@@ -24,13 +24,13 @@ class StokOpnameController extends Controller
     }
 
     // form sesi baru
-    public function create()
+    public function create() {
+    
         if (auth()->user()->role !== 'gudang') {
             abort(403, 'Hanya Gudang yang dapat membuat sesi opname.');
         }
-        {
         return view('stok-opname.create');
-        }
+    }
 
     // simpan sesi baru
     public function store(Request $request)
