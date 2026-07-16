@@ -14,6 +14,7 @@ use App\Http\Controllers\StokController;
 use App\Http\Controllers\StokOpnameController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\DashboardController;
 
 
 Route::get('/', function () {
@@ -29,9 +30,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard.index');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {

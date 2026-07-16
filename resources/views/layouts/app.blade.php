@@ -15,6 +15,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     {{-- Custom JS --}}
     <script src="{{ asset('js/app.js') }}"></script>
+    {{-- Chart JS --}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     @if (!request()->is('login'))
@@ -34,5 +36,6 @@
             @yield('content')
         </div>
     @endif
+    @stack('scripts')
 </body>
 </html>
