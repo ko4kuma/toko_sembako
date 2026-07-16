@@ -87,6 +87,9 @@ class PegawaiController extends Controller
             'role' => 'required|in:admin,kasir,gudang,purchasing',
             'password' => 'nullable|min:6',
         ]);
+        if ($pegawai->user_id === auth()->id() && $request->role !== 'admin') {
+            return back()->with('error', 'Anda tidak bisa mengubah role Anda sendiri dari Admin.');
+        }
 
         $pegawai->update([
             'nama_lengkap' => $request->nama_lengkap,
@@ -117,6 +120,10 @@ class PegawaiController extends Controller
     public function destroy($id)
     {
         $pegawai = Pegawai::with('user')->findOrFail($id);
+
+        if ($pegawai->user_id === auth()->id()) {
+        return back()->with('error', 'Anda tidak bisa menghapus akun Anda sendiri.');
+    }
 
         // Hapus user otomatis ikut hapus pegawai (cascadeOnDelete)
         $pegawai->user->delete();
