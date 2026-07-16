@@ -68,6 +68,7 @@
                                 Edit
                             </a>
 
+                            @if($p->user_id !== auth()->id())
                             <form action="{{ route('pegawai.destroy', $p->id) }}"
                                     method="POST"
                                     class="d-inline"
@@ -79,6 +80,7 @@
                                     Hapus
                                 </button>
                             </form>
+                            @endif
                         </td>
                     </tr>
                 @empty
