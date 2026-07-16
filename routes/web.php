@@ -69,7 +69,7 @@ Route::middleware(['auth', 'role:purchasing,admin'])->group(function () {
     Route::get('/pembelian/{id}/detail', [PembelianController::class, 'detail'])->name('pembelian.detail');
 });
 
-Route::middleware(['auth', 'role:gudang'])->group(function () {
+Route::middleware(['auth', 'role:gudang,admin'])->group(function () {
     Route::resource('stok-opname', StokOpnameController::class)->only(['index', 'create', 'store', 'destroy']);
     Route::get('stok-opname/{id}/isi', [StokOpnameController::class, 'isiDetail'])->name('stok-opname.isi');
     Route::post('stok-opname/{id}/simpan-detail', [StokOpnameController::class, 'simpanDetail'])->name('stok-opname.simpan-detail');
