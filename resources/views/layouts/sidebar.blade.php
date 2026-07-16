@@ -20,6 +20,11 @@
                         <i class="bi bi-cash"></i> Kasir
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark d-flex align-items-center gap-1" href="{{ route('member.index') }}">
+                        <i class="bi bi-person-fill"></i> Member
+                    </a>
+                </li>
                 @endif
 
                 {{-- Master Data --}}
