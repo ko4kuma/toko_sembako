@@ -30,7 +30,7 @@
 @endif
 
 {{-- FORM TRANSAKSI --}}
-<form action="{{ route('transaksi.store') }}"
+<form id="form-transaksi" action="{{ route('transaksi.store') }}"
       method="POST">
 
     @csrf
@@ -572,7 +572,7 @@ document.addEventListener('change', function (e) {
 // ================================
 // SEBELUM SUBMIT: masukin diskon_ids[] dan member_id ke form via hidden input
 // ================================
-document.querySelector('form').addEventListener('submit', function (e) {
+document.getElementById('form-transaksi').addEventListener('submit', function (e) {
     let form = e.target;
     // VALIDASI: metode pembayaran wajib dipilih
     let metode = document.getElementById('metode-pembayaran').value;

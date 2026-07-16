@@ -59,7 +59,6 @@ class TransaksiController extends Controller
             'metode' => 'required|in:cash,transfer,qris,debit',
             'jumlah' => 'required|numeric|min:0',
         ]);
-
         $total = 0;
         // HITUNG TOTAL + CEK STOK
         foreach($request->barang_id as $key => $barangId)

@@ -40,7 +40,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('diskon/eligible', [DiskonController::class, 'eligible'])->name('diskon.eligible');
     Route::resource('diskon', DiskonController::class);
     Route::resource('stok', StokController::class)->only(['index']);
-    // Member: index, edit, update, destroy khusus admin
     Route::get('member', [MemberController::class, 'index'])->name('member.index');
     Route::get('member/{member}/edit', [MemberController::class, 'edit'])->name('member.edit');
     Route::put('member/{member}', [MemberController::class, 'update'])->name('member.update');
@@ -57,6 +56,7 @@ Route::middleware(['auth', 'role:kasir,admin'])->group(function () {
     Route::get('/transaksi/{id}/detail', [TransaksiController::class, 'detail'])->name('transaksi.detail');
     Route::get('/transaksi/struk/{id}', [TransaksiController::class, 'struk'])->name('transaksi.struk');
     // Kasir boleh cari & tambah member 
+    Route::get('member', [MemberController::class, 'index'])->name('member.index');
     Route::get('member/search', [MemberController::class, 'search'])->name('member.search');
     Route::get('member/create', [MemberController::class, 'create'])->name('member.create');
     Route::post('member', [MemberController::class, 'store'])->name('member.store');
