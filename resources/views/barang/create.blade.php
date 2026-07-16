@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Buat Sesi Opname')
+@section('title', 'Tambah Barang')
 
 @section('content')
 
@@ -10,7 +10,7 @@
 
             <div class="card">
                 <div class="card-header">
-                    <h4>Buat Sesi Opname Baru</h4>
+                    <h4>Tambah Barang</h4>
                 </div>
                 <div class="card-body">
                     @if ($errors->any())
@@ -23,39 +23,82 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('stok-opname.store') }}"
+                    <form action="{{ route('barang.store') }}"
                           method="POST">
 
                         @csrf
                         <div class="mb-3">
                             <label class="form-label">
-                                Tanggal
+                                Nama Barang
                             </label>
 
-                            <input type="date"
-                                   name="tanggal"
+                            <input type="text"
+                                   name="nama_barang"
                                    class="form-control"
-                                   value="{{ old('tanggal', now()->toDateString()) }}"
-                                   required>
+                                   value="{{ old('nama_barang') }}">
                         </div>
-
                         <div class="mb-3">
                             <label class="form-label">
-                                Keterangan
+                                Harga
                             </label>
 
-                            <textarea name="keterangan"
-                                      class="form-control"
-                                      rows="3"
-                                      placeholder="Contoh: Opname akhir bulan Juli">{{ old('keterangan') }}</textarea>
+                            <input type="number"
+                                   name="harga"
+                                   class="form-control"
+                                   step="0.01"
+                                   value="{{ old('harga') }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Kategori
+                            </label>
+
+                            <select name="kategori_id"
+                                    class="form-select">
+
+                                <option value="">
+                                    -- Pilih Kategori --
+                                </option>
+
+                                @foreach ($kategoris as $kategori)
+                                    <option value="{{ $kategori->id }}"
+                                        {{ old('kategori_id') == $kategori->id ? 'selected' : '' }}>
+
+                                        {{ $kategori->nama_kategori }}
+                                    </option>
+                                @endforeach
+
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Supplier
+                            </label>
+
+                            <select name="supplier_id"
+                                    class="form-select">
+
+                                <option value="">
+                                    -- Pilih Supplier --
+                                </option>
+
+                                @foreach ($suppliers as $supplier)
+                                    <option value="{{ $supplier->id }}"
+                                        {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>
+
+                                        {{ $supplier->nama_supplier }}
+                                    </option>
+                                @endforeach
+
+                            </select>
                         </div>
 
                         <button type="submit"
                                 class="btn btn-primary">
-                            Buat & Mulai Isi Data
+                            Simpan
                         </button>
 
-                        <a href="{{ route('stok-opname.index') }}"
+                        <a href="{{ route('barang.index') }}"
                            class="btn btn-secondary">
                             Kembali
                         </a>
