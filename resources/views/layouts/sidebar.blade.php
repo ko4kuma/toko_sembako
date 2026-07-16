@@ -58,6 +58,7 @@
                         <ul class="nav flex-column">
                             @if(auth()->user()->role === 'admin')
                             <li><a class="nav-link icon-link text-dark" href="{{ route('stok.index') }}">Pergerakan Stok</a></li>
+                            <li><a class="nav-link icon-link text-dark" href="{{ route('stok-opname.index') }}"> Stok Opname</a></li>
                             @endif
                             @if(auth()->user()->role === 'gudang')
                             <li><a class="nav-link icon-link text-dark" href="{{ route('stok-opname.index') }}"> Stok Opname</a></li>

@@ -143,8 +143,6 @@
     </form>
 @endcan
 
-@endif
-
 {{-- TABEL DATA YANG SUDAH TERSIMPAN --}}
 <hr>
 <h5>Data Tersimpan</h5>
