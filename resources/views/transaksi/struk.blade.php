@@ -63,6 +63,7 @@
         @endif
     </p>
     <p><b>Tanggal:</b> {{ $transaksi->tanggal }}</p>
+    <p><b>Kasir:</b> {{ $transaksi->user->name ?? '-' }}</p>
 
     <hr>
 

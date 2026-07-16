@@ -9,11 +9,15 @@ use App\Models\DetailPembelian;
 class Pembelian extends Model
 {
     protected $fillable = [
+        'user_id',
         'supplier_id',
         'tanggal',
         'total',
     ];
-
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
     public function supplier()
     {
         return $this->belongsTo(Supplier::class);

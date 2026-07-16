@@ -16,7 +16,7 @@ class PembelianController extends Controller
     // =========================
     public function index()
     {
-        $pembelian = Pembelian::with('supplier')
+        $pembelian = Pembelian::with(['supplier', 'user'])
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -59,6 +59,7 @@ class PembelianController extends Controller
         }
 
         $pembelian = Pembelian::create([
+            'user_id' => auth()->id(),
             'supplier_id' => $request->supplier_id,
             'tanggal' => $request->tanggal,
             'total' => $total,
@@ -101,7 +102,7 @@ class PembelianController extends Controller
     // =========================
     public function detail($id)
     {
-        $pembelian = Pembelian::with('supplier')->findOrFail($id);
+        $pembelian = Pembelian::with(['supplier', 'user'])->findOrFail($id);
 
         $detail = DetailPembelian::with('barang')
                     ->where('pembelian_id', $id)

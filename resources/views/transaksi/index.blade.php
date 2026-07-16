@@ -12,6 +12,7 @@
             <th>Nama Member</th>
             <th>Tanggal</th>
             <th>Total</th>
+            <th width="200">Dicatat oleh</th>
             <th>Aksi</th>
         </tr>
 
@@ -29,8 +30,7 @@
             </td>
             <td>{{ $t->tanggal }}</td>
             <td>Rp {{ $t->total_akhir }}</td>
-
-
+            <td>{{ $t->user->name ?? '-' }}</td>
             <td>
 
                 <a href="{{ route('transaksi.detail', $t->id) }}"

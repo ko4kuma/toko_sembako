@@ -29,6 +29,10 @@
             <th>Total Setelah Diskon</th>
             <td>Rp {{ number_format($transaksi->total_akhir) }}</td>
         </tr>
+        <tr>
+            <th>Kasir</th>
+            <td>{{ $transaksi->user->name ?? '-' }}</td>
+        </tr>
 
     </table>
     <hr>

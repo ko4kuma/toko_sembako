@@ -7,10 +7,12 @@ use App\Models\Member;
 use App\Models\DetailTransaksi;
 use App\Models\Pembayaran;
 use App\Models\TransaksiDiskon;
+use App\Models\User;
 
 class Transaksi extends Model
 {
      protected $fillable = [
+        'user_id',
         'member_id',
         'tanggal',
         'total',
@@ -18,6 +20,10 @@ class Transaksi extends Model
         'total_akhir',
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
     public function member(){
         return $this->belongsTo(Member::class);
     }

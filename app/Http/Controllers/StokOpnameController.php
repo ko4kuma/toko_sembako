@@ -33,6 +33,7 @@ class StokOpnameController extends Controller
         ]);
 
         $stokOpname = StokOpname::create([
+            'user_id' => auth()->id(),
             'tanggal' => $request->tanggal,
             'keterangan' => $request->keterangan,
             'status' => 'draft',
@@ -58,7 +59,7 @@ class StokOpnameController extends Controller
     // isi detail barang
     public function isiDetail($id)
     {
-        $stokOpname = StokOpname::with('detail.barang')->findOrFail($id);
+        $stokOpname = StokOpname::with(['detail.barang', 'user'])->findOrFail($id);
         $barang = Barang::all();
 
         return view('stok-opname.isi', compact('stokOpname', 'barang'));
