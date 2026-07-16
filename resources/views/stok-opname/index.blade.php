@@ -27,35 +27,47 @@
         <tr>
             <th>No</th>
             <th>Tanggal</th>
+            <th>Dibuat oleh</th>
             <th>Keterangan</th>
             <th>Status</th>
             <th>Aksi</th>
         </tr>
 
         @forelse($stokOpname as $s)
-
         <tr>
 
             <td>{{ $loop->iteration }}</td>
             <td>{{ $s->tanggal }}</td>
+            <td>{{ $s->user->name ?? '-' }}</td>
             <td>{{ $s->keterangan ?? '-' }}</td>
 
             <td>
                 @if($s->status === 'draft')
-                    <span class="badge bg-warning text-dark">Draft</span>
+                    <span class="badge bg-secondary">Draft</span>
+                @elseif($s->status === 'menunggu_approval')
+                    <span class="badge bg-warning text-dark">Menunggu Approval</span>
                 @else
-                    <span class="badge bg-success">Selesai</span>
+                    <span class="badge bg-success">Disetujui</span>
                 @endif
             </td>
 
             {{-- AKSI --}}
             <td>
-                @if($s->status === 'draft')
+                @can('edit', $s)
                     <a href="{{ route('stok-opname.isi', $s->id) }}"
-                       class="btn btn-warning btn-sm">
+                    class="btn btn-warning btn-sm">
                         Lanjutkan
                     </a>
+                @endcan
 
+                @cannot('edit', $s)
+                    <a href="{{ route('stok-opname.isi', $s->id) }}"
+                    class="btn btn-info btn-sm">
+                        Lihat Detail
+                    </a>
+                @endcannot
+
+                @can('delete', $s)
                     <form action="{{ route('stok-opname.destroy', $s->id) }}"
                         method="POST"
                         class="d-inline"
@@ -66,19 +78,14 @@
                             Hapus
                         </button>
                     </form>
-                @else
-                    <a href="{{ route('stok-opname.isi', $s->id) }}"
-                       class="btn btn-info btn-sm">
-                        Lihat Detail
-                    </a>
-                @endif
+                @endcan
             </td>
 
         </tr>
 
         @empty
         <tr>
-            <td colspan="5" class="text-center py-4 text-muted">
+            <td colspan="6" class="text-center py-4 text-muted">
                 Belum ada sesi opname
             </td>
         </tr>

@@ -13,7 +13,13 @@ class StokOpnameController extends Controller
     // tampil data sesi opname
     public function index()
     {
-        $stokOpname = StokOpname::orderBy('created_at', 'desc')->get();
+        $query = StokOpname::with('user');
+
+        if (auth()->user()->role !== 'admin') {
+            $query->where('user_id', auth()->id());
+        }
+
+        $stokOpname = $query->orderBy('created_at', 'desc')->get();
 
         return view('stok-opname.index', compact('stokOpname'));
     }
@@ -45,9 +51,10 @@ class StokOpnameController extends Controller
     public function destroy($id) 
     {
         $stokOpname = StokOpname::findOrFail($id);
+        $this->authorize('delete', $stokOpname);
 
         if ($stokOpname->status !== 'draft') {
-            return back()->with('error', 'Sesi opname ini sudah selesai, tidak bisa dihapus.');
+            return back()->with('error', 'Sesi opname yang sudah diajukan/disetujui tidak bisa dihapus.');
         }
 
         $stokOpname->delete();
@@ -60,6 +67,7 @@ class StokOpnameController extends Controller
     public function isiDetail($id)
     {
         $stokOpname = StokOpname::with(['detail.barang', 'user'])->findOrFail($id);
+        $this->authorize('view', $stokOpname);
         $barang = Barang::all();
 
         return view('stok-opname.isi', compact('stokOpname', 'barang'));
@@ -69,10 +77,7 @@ class StokOpnameController extends Controller
     public function simpanDetail(Request $request, $id)
     {
         $stokOpname = StokOpname::findOrFail($id);
-
-        if ($stokOpname->status !== 'draft') {
-            return back()->with('error', 'Sesi opname ini sudah selesai, tidak bisa diubah lagi.');
-        }
+        $this->authorize('edit', $stokOpname);
 
         $request->validate([
             'barang_id' => 'required|array',
@@ -105,12 +110,33 @@ class StokOpnameController extends Controller
     }
 
     //finalisasi sesi opname
-    public function selesaikan($id)
+    public function ajukan($id)
     {
-        $stokOpname = StokOpname::with('detail')->findOrFail($id);
+        $stokOpname = StokOpname::findOrFail($id);
+        $this->authorize('ajukan', $stokOpname);
 
         if ($stokOpname->status !== 'draft') {
-            return back()->with('error', 'Sesi opname ini sudah selesai sebelumnya.');
+            return back()->with('error', 'Sesi opname ini sudah diajukan/diproses sebelumnya.');
+        }
+
+        if ($stokOpname->detail()->count() === 0) {
+            return back()->with('error', 'Belum ada data barang yang diisi.');
+        }
+
+        $stokOpname->update(['status' => 'menunggu_approval']);
+
+        return redirect()->route('stok-opname.index')
+            ->with('success', 'Opname berhasil diajukan, menunggu approval admin.');
+    }
+    
+    // SETUJUI OPNAME (ADMIN) - INSERT KE STOKS
+    public function approve($id)
+    {
+        $stokOpname = StokOpname::with('detail')->findOrFail($id);
+        $this->authorize('approve', $stokOpname);
+
+        if ($stokOpname->status !== 'menunggu_approval') {
+            return back()->with('error', 'Opname ini tidak dalam status menunggu approval.');
         }
 
         foreach ($stokOpname->detail as $d) {
@@ -132,9 +158,30 @@ class StokOpnameController extends Controller
             ]);
         }
 
-        $stokOpname->update(['status' => 'selesai']);
+        $stokOpname->update(['status' => 'disetujui']);
 
-        return redirect()->route('stok-opname.index')
-            ->with('success', 'Opname berhasil diselesaikan, stok telah disesuaikan.');
+        return redirect()->route('stok-opname.approval')
+            ->with('success', 'Opname berhasil disetujui, stok telah disesuaikan.');
+    }
+    // TOLAK OPNAME (ADMIN) - BALIK KE DRAFT
+    public function reject(Request $request, $id)
+    {
+        $stokOpname = StokOpname::findOrFail($id);
+        $this->authorize('approve', $stokOpname);
+
+        if ($stokOpname->status !== 'menunggu_approval') {
+            return back()->with('error', 'Opname ini tidak dalam status menunggu approval.');
+        }
+        $request->validate([
+            'catatan_approval' => 'required|string',
+        ]);
+
+        $stokOpname->update([
+            'status' => 'draft',
+            'catatan_approval' => $request->catatan_approval,
+        ]);
+
+        return redirect()->route('stok-opname.approval')
+            ->with('success', 'Opname ditolak dan dikembalikan ke Gudang untuk revisi.');
     }
 }

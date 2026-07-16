@@ -28,16 +28,18 @@
     Status:
     @if($stokOpname->status === 'draft')
         <span class="badge bg-warning text-dark">Draft</span>
+    @elseif($stokOpname->status === 'menunggu_approval')
+        <span class="badge bg-info text-white">Menunggu Approval</span>
+    @elseif($stokOpname->status === 'disetujui')
+        <span class="badge bg-success text-white">Disetujui</span>
     @else
-        <span class="badge bg-success">Selesai</span>
+        <span class="badge bg-secondary">{{ ucfirst($stokOpname->status) }}</span>
     @endif
 </p>
 
-@if($stokOpname->status === 'draft')
-
-{{-- FORM ISI DATA (HANYA MUNCUL KALAU MASIH DRAFT) --}}
-<form action="{{ route('stok-opname.simpan-detail', $stokOpname->id) }}" method="POST">
-
+@can('edit', $stokOpname)
+    {{-- FORM ISI DATA (HANYA MUNCUL KALAU MASIH DRAFT & PEMILIK) --}}
+    <form action="{{ route('stok-opname.simpan-detail', $stokOpname->id) }}" method="POST">
     @csrf
 
     <div id="barang-wrapper">
@@ -105,13 +107,41 @@
 
 <hr>
 
-<form action="{{ route('stok-opname.selesaikan', $stokOpname->id) }}" method="POST"
-      onsubmit="return confirm('Yakin selesaikan opname ini? Stok akan disesuaikan dan tidak bisa diubah lagi.')">
+<form action="{{ route('stok-opname.ajukan', $stokOpname->id) }}" method="POST"
+    onsubmit="return confirm('Yakin ajukan opname ini untuk approval?')">
     @csrf
-    <button type="submit" class="btn btn-danger">
-        Selesaikan Opname
+    <button type="submit" class="btn btn-primary">
+        Ajukan untuk Approval
     </button>
 </form>
+
+@endcan
+
+@can('approve', $stokOpname)
+    <hr>
+    <h5>Tindakan Approval</h5>
+
+    <form action="{{ route('stok-opname.approve', $stokOpname->id) }}" method="POST"
+        class="d-inline"
+        onsubmit="return confirm('Yakin setujui opname ini? Stok akan langsung disesuaikan.')">
+        @csrf
+        <button type="submit" class="btn btn-success">
+            Setujui
+        </button>
+    </form>
+
+    <form action="{{ route('stok-opname.reject', $stokOpname->id) }}" method="POST" class="d-inline mt-2">
+        @csrf
+        <div class="mb-2 mt-2">
+            <label class="form-label">Catatan Penolakan (wajib)</label>
+            <textarea name="catatan_approval" class="form-control" rows="2" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-danger"
+            onclick="return confirm('Yakin tolak opname ini? Akan dikembalikan ke draft.')">
+            Tolak
+        </button>
+    </form>
+@endcan
 
 @endif
 
