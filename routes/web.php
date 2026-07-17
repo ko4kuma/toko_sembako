@@ -74,6 +74,13 @@ Route::middleware(['auth', 'role:gudang,admin'])->group(function () {
     Route::get('stok-opname/{id}/isi', [StokOpnameController::class, 'isiDetail'])->name('stok-opname.isi');
     Route::post('stok-opname/{id}/simpan-detail', [StokOpnameController::class, 'simpanDetail'])->name('stok-opname.simpan-detail');
     Route::post('stok-opname/{id}/ajukan', [StokOpnameController::class, 'ajukan'])->name('stok-opname.ajukan');
+
 });
+
+    Route::get('/pembelian/{id}/edit', [PembelianController::class, 'edit'])
+        ->name('pembelian.edit');
+
+    Route::put('/pembelian/{id}', [PembelianController::class, 'update'])
+        ->name('pembelian.update');
 
 
