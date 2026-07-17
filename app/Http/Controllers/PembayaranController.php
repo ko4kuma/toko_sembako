@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Pembayaran;
 use App\Models\Transaksi;
 use Illuminate\Http\Request;
+use App\Models\Stok;
+use App\Models\Barang;
 
 class PembayaranController extends Controller
 {
@@ -51,6 +53,26 @@ class PembayaranController extends Controller
             'jumlah'       => $grandTotal,
         ]);
 
+        foreach ($transaksi->detailTransaksi as $detail) {
+
+        $barang = $detail->barang;
+
+        $stokSebelum = $barang->stokTerkini();
+
+        $stokSesudah = $stokSebelum - $detail->jumlah;
+
+        Stok::create([
+            'barang_id'       => $barang->id,
+            'jumlah'          => $detail->jumlah,
+            'jenis'           => 'keluar',
+            'stok_sebelum'    => $stokSebelum,
+            'stok_sesudah'    => $stokSesudah,
+            'referensi_type'  => Transaksi::class,
+            'referensi_id'    => $transaksi->id,
+            'keterangan'      => 'Penjualan',
+        ]);
+
+    }
         $transaksi->update([
             'status' => 'lunas'
         ]);
