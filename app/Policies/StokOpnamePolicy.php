@@ -7,6 +7,11 @@ use App\Models\StokOpname;
 
 class StokOpnamePolicy
 {
+    // BOLEH BUAT (cuma gudang)
+    public function create(User $user): bool
+    {
+        return $user->role === 'gudang';
+    }
     // BOLEH LIHAT (dipakai buat filter index & buka halaman isi)
     public function view(User $user, StokOpname $stokOpname): bool
     {
@@ -16,21 +21,24 @@ class StokOpnamePolicy
     // BOLEH EDIT/ISI DATA (cuma pemilik sendiri, saat masih draft)
     public function edit(User $user, StokOpname $stokOpname): bool
     {
-        return $stokOpname->user_id === $user->id
+        return $user->role === 'gudang' 
+            && $stokOpname->user_id === $user->id
             && $stokOpname->status === 'draft';
     }
 
     // BOLEH AJUKAN (cuma pemilik sendiri, saat masih draft)
     public function ajukan(User $user, StokOpname $stokOpname): bool
     {
-        return $stokOpname->user_id === $user->id
+        return $user->role === 'gudang' 
+            && $stokOpname->user_id === $user->id
             && $stokOpname->status === 'draft';
     }
 
     // BOLEH HAPUS (cuma pemilik sendiri, saat masih draft)
     public function delete(User $user, StokOpname $stokOpname): bool
     {
-        return $stokOpname->user_id === $user->id
+        return $user->role === 'gudang' 
+            && $stokOpname->user_id === $user->id
             && $stokOpname->status === 'draft';
     }
 

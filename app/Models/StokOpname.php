@@ -11,6 +11,8 @@ class StokOpname extends Model
         'tanggal',
         'keterangan',
         'status',
+        'user_id',
+        'catatan_approval',
     ];
     public function user()
     {

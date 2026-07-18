@@ -22,6 +22,9 @@
 @if(session('success'))
     <div class="alert alert-success">{{ session('success') }}</div>
 @endif
+@if(session('warning'))
+    <div class="alert alert-warning">{{ session('warning') }}</div>
+@endif
 
 <h3>Sesi Opname — {{ $stokOpname->tanggal }}</h3>
 <p>
@@ -36,6 +39,11 @@
         <span class="badge bg-secondary">{{ ucfirst($stokOpname->status) }}</span>
     @endif
 </p>
+@if($stokOpname->status === 'draft' && $stokOpname->catatan_approval)
+    <div class="alert alert-danger">
+        <strong>Ditolak oleh Admin:</strong> {{ $stokOpname->catatan_approval }}
+    </div>
+@endif
 
 @can('edit', $stokOpname)
     {{-- FORM ISI DATA (HANYA MUNCUL KALAU MASIH DRAFT & PEMILIK) --}}
@@ -44,52 +52,92 @@
 
     <div id="barang-wrapper">
 
-        <div class="row mb-3 barang-item align-items-end">
+        @forelse($stokOpname->detail as $d)
+            <div class="row mb-3 barang-item align-items-end">
 
-            {{-- BARANG --}}
-            <div class="col-md-4">
-                <label class="form-label">Barang</label>
-                <select name="barang_id[]" class="form-control pilih-barang" required>
-                    <option value="">-- Pilih Barang --</option>
-                    @foreach($barang as $b)
-                        <option value="{{ $b->id }}" data-stok="{{ $b->stokTerkini() }}">
-                            {{ $b->nama_barang }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+                <div class="col-md-4">
+                    <label class="form-label">Barang</label>
+                    <select name="barang_id[]" class="form-control pilih-barang" required>
+                        <option value="">-- Pilih Barang --</option>
+                        @foreach($barang as $b)
+                            <option value="{{ $b->id }}"
+                                data-stok="{{ $b->stokTerkini() }}"
+                                {{ $b->id == $d->barang_id ? 'selected' : '' }}>
+                                {{ $b->nama_barang }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
 
-            {{-- STOK SISTEM (READONLY) --}}
-            <div class="col-md-2">
-                <label class="form-label">Stok Sistem</label>
-                <input type="text" class="form-control stok-sistem-display" readonly value="0">
-            </div>
+                <div class="col-md-2">
+                    <label class="form-label">Stok Sistem</label>
+                    <input type="text" class="form-control stok-sistem-display" readonly
+                        value="{{ $d->barang->stokTerkini() }}">
+                </div>
 
-            {{-- STOK FISIK --}}
-            <div class="col-md-2">
-                <label class="form-label">Stok Fisik</label>
-                <input type="number" name="stok_fisik[]" class="form-control stok-fisik" min="0" required>
-            </div>
+                <div class="col-md-2">
+                    <label class="form-label">Stok Fisik</label>
+                    <input type="number" name="stok_fisik[]" class="form-control stok-fisik"
+                        min="0" required value="{{ $d->stok_fisik }}">
+                </div>
 
-            {{-- SELISIH (READONLY) --}}
-            <div class="col-md-2">
-                <label class="form-label">Selisih</label>
-                <input type="text" class="form-control selisih-display" readonly value="0">
-            </div>
+                <div class="col-md-2">
+                    <label class="form-label">Selisih</label>
+                    <input type="text" class="form-control selisih-display" readonly
+                        value="{{ $d->barang->stokTerkini() - $d->stok_fisik }}">
+                </div>
 
-            {{-- CATATAN --}}
-            <div class="col-md-2">
-                <label class="form-label">Catatan</label>
-                <input type="text" name="catatan[]" class="form-control">
-            </div>
-            {{-- TOMBOL HAPUS --}}
-            <div class="col-md-1">
-                <button type="button" class="btn btn-danger btn-sm remove-barang">
-                    Hapus
-                </button>
-            </div>
+                <div class="col-md-2">
+                    <label class="form-label">Catatan</label>
+                    <input type="text" name="catatan[]" class="form-control" value="{{ $d->catatan }}">
+                </div>
 
-        </div>
+                <div class="col-md-1">
+                    <button type="button" class="btn btn-danger btn-sm remove-barang">Hapus</button>
+                </div>
+
+            </div>
+        @empty
+            <div class="row mb-3 barang-item align-items-end">
+
+                <div class="col-md-4">
+                    <label class="form-label">Barang</label>
+                    <select name="barang_id[]" class="form-control pilih-barang" required>
+                        <option value="">-- Pilih Barang --</option>
+                        @foreach($barang as $b)
+                            <option value="{{ $b->id }}" data-stok="{{ $b->stokTerkini() }}">
+                                {{ $b->nama_barang }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Stok Sistem</label>
+                    <input type="text" class="form-control stok-sistem-display" readonly value="0">
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Stok Fisik</label>
+                    <input type="number" name="stok_fisik[]" class="form-control stok-fisik" min="0" required>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Selisih</label>
+                    <input type="text" class="form-control selisih-display" readonly value="0">
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Catatan</label>
+                    <input type="text" name="catatan[]" class="form-control">
+                </div>
+
+                <div class="col-md-1">
+                    <button type="button" class="btn btn-danger btn-sm remove-barang">Hapus</button>
+                </div>
+
+            </div>
+        @endforelse
 
     </div>
 
@@ -98,21 +146,20 @@
     </button>
 
     <br>
-
-    <button type="submit" class="btn btn-primary">
+    
+    
+    <hr>
+    
+    <button type="submit" class="btn btn-warning">
         Simpan sebagai Draft
     </button>
-
-</form>
-
-<hr>
-
-<form action="{{ route('stok-opname.ajukan', $stokOpname->id) }}" method="POST"
-    onsubmit="return confirm('Yakin ajukan opname ini untuk approval?')">
-    @csrf
-    <button type="submit" class="btn btn-primary">
-        Ajukan untuk Approval
-    </button>
+    
+    <button type="submit"
+    formaction="{{ route('stok-opname.ajukan', $stokOpname->id) }}"
+    class="btn btn-primary"
+    onclick="return confirm('Yakin ajukan opname ini untuk approval?')">
+    Ajukan untuk Approval
+</button>
 </form>
 
 @endcan
@@ -125,6 +172,9 @@
         class="d-inline"
         onsubmit="return confirm('Yakin setujui opname ini? Stok akan langsung disesuaikan.')">
         @csrf
+        @if(session('warning'))
+            <input type="hidden" name="konfirmasi_overlap" value="1">
+        @endif
         <button type="submit" class="btn btn-success">
             Setujui
         </button>

@@ -35,9 +35,17 @@ class StokOpnameController extends Controller
     // simpan sesi baru
     public function store(Request $request)
     {
+        $adaOpnameAktif = StokOpname::where('user_id', auth()->id())
+            ->whereIn('status', ['draft', 'menunggu_approval'])
+            ->exists();
+
+        if ($adaOpnameAktif) {
+            return back()->with('error', 'Anda masih punya sesi opname yang belum selesai atau menunggu approval.');
+        }
         if (auth()->user()->role !== 'gudang') {
             abort(403, 'Hanya Gudang yang dapat membuat sesi opname.');
         }
+
         $request->validate([
             'tanggal' => 'required|date',
             'keterangan' => 'nullable|string',
@@ -84,38 +92,14 @@ class StokOpnameController extends Controller
         $stokOpname = StokOpname::findOrFail($id);
         $this->authorize('edit', $stokOpname);
 
-        $request->validate([
-            'barang_id' => 'required|array',
-            'barang_id.*' => 'required|exists:barangs,id',
-            'stok_fisik' => 'required|array',
-            'stok_fisik.*' => 'required|numeric|min:0',
-        ]);
-
-        // hapus detail lama, ganti yang baru 
-        StokOpnameDetail::where('stok_opname_id', $id)->delete();
-
-        foreach ($request->barang_id as $key => $barangId) {
-            $barang = Barang::findOrFail($barangId);
-            $stokSistem = $barang->stokTerkini();
-            $stokFisik = $request->stok_fisik[$key];
-            $selisih = $stokFisik - $stokSistem;
-
-            StokOpnameDetail::create([
-                'stok_opname_id' => $stokOpname->id,
-                'barang_id' => $barangId,
-                'stok_sistem' => $stokSistem,
-                'stok_fisik' => $stokFisik,
-                'selisih' => $selisih,
-                'catatan' => $request->catatan[$key] ?? null,
-            ]);
-        }
+        $this->simpanDataBarang($request, $stokOpname);
 
         return redirect()->route('stok-opname.isi', $stokOpname->id)
             ->with('success', 'Data opname berhasil disimpan sebagai draft.');
     }
 
     //finalisasi sesi opname
-    public function ajukan($id)
+    public function ajukan(Request $request, $id)
     {
         $stokOpname = StokOpname::findOrFail($id);
         $this->authorize('ajukan', $stokOpname);
@@ -124,24 +108,38 @@ class StokOpnameController extends Controller
             return back()->with('error', 'Sesi opname ini sudah diajukan/diproses sebelumnya.');
         }
 
-        if ($stokOpname->detail()->count() === 0) {
-            return back()->with('error', 'Belum ada data barang yang diisi.');
-        }
+        $this->simpanDataBarang($request, $stokOpname);
 
-        $stokOpname->update(['status' => 'menunggu_approval']);
+        $stokOpname->update([
+            'status' => 'menunggu_approval',
+            'catatan_approval' => null,
+        ]);
 
         return redirect()->route('stok-opname.index')
             ->with('success', 'Opname berhasil diajukan, menunggu approval admin.');
     }
     
     // SETUJUI OPNAME (ADMIN) - INSERT KE STOKS
-    public function approve($id)
+    public function approve(Request $request, $id)
     {
         $stokOpname = StokOpname::with('detail')->findOrFail($id);
         $this->authorize('approve', $stokOpname);
 
         if ($stokOpname->status !== 'menunggu_approval') {
             return back()->with('error', 'Opname ini tidak dalam status menunggu approval.');
+        }
+
+        $barangIds = $stokOpname->detail->pluck('barang_id');
+
+        $adaOpnameLainOverlap = StokOpnameDetail::whereIn('barang_id', $barangIds)
+            ->whereHas('stokOpname', function ($q) use ($stokOpname) {
+                $q->where('status', 'menunggu_approval')
+                ->where('id', '!=', $stokOpname->id);
+            })
+            ->exists();
+
+        if ($adaOpnameLainOverlap && !$request->has('konfirmasi_overlap')) {
+            return back()->with('warning', 'Ada opname lain yang menunggu approval dengan barang yang sama. Approve opname ini akan mengabaikan perhitungan opname lainnya untuk barang tersebut. Klik "Setujui" sekali lagi untuk tetap lanjutkan.');
         }
 
         foreach ($stokOpname->detail as $d) {
@@ -165,7 +163,7 @@ class StokOpnameController extends Controller
 
         $stokOpname->update(['status' => 'disetujui']);
 
-        return redirect()->route('stok-opname.approval')
+        return redirect()->route('stok-opname.index')
             ->with('success', 'Opname berhasil disetujui, stok telah disesuaikan.');
     }
     // TOLAK OPNAME (ADMIN) - BALIK KE DRAFT
@@ -186,7 +184,36 @@ class StokOpnameController extends Controller
             'catatan_approval' => $request->catatan_approval,
         ]);
 
-        return redirect()->route('stok-opname.approval')
+        return redirect()->route('stok-opname.index')
             ->with('success', 'Opname ditolak dan dikembalikan ke Gudang untuk revisi.');
+    }
+    private function simpanDataBarang(Request $request, StokOpname $stokOpname)
+    {
+        $request->validate([
+            'barang_id' => 'required|array|min:1',
+            'barang_id.*' => 'required|exists:barangs,id',
+            'stok_fisik' => 'required|array',
+            'stok_fisik.*' => 'required|numeric|min:0',
+        ]);
+
+        \DB::transaction(function () use ($request, $stokOpname) {
+            StokOpnameDetail::where('stok_opname_id', $stokOpname->id)->delete();
+
+            foreach ($request->barang_id as $key => $barangId) {
+                $barang = Barang::findOrFail($barangId);
+                $stokSistem = $barang->stokTerkini();
+                $stokFisik = $request->stok_fisik[$key];
+                $selisih = $stokFisik - $stokSistem;
+
+                StokOpnameDetail::create([
+                    'stok_opname_id' => $stokOpname->id,
+                    'barang_id' => $barangId,
+                    'stok_sistem' => $stokSistem,
+                    'stok_fisik' => $stokFisik,
+                    'selisih' => $selisih,
+                    'catatan' => $request->catatan[$key] ?? null,
+                ]);
+            }
+        });
     }
 }

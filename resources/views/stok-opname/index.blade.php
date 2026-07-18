@@ -18,7 +18,7 @@
         </div>
     @endif
 
-    @can('create', $stokOpname)
+    @can('create', App\Models\StokOpname::class)
         <a href="{{ route('stok-opname.create') }}" class="btn btn-primary mb-3">
             Buat Sesi Opname Baru
         </a>

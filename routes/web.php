@@ -47,8 +47,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('pegawai', PegawaiController::class)->except('show');
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     Route::get('/laporan/print', [LaporanController::class, 'print'])->name('laporan.print');
-    Route::post('/stok-opname/{id}/approve', [StokOpnameController::class, 'approve'])->name('stok-opname.approve');
-    Route::post('/stok-opname/{id}/reject', [StokOpnameController::class, 'reject'])->name('stok-opname.reject');
+    Route::post('stok-opname/{id}/approve', [StokOpnameController::class, 'approve'])->name('stok-opname.approve');
+    Route::post('stok-opname/{id}/reject', [StokOpnameController::class, 'reject'])->name('stok-opname.reject');
 });
 
 Route::middleware(['auth', 'role:kasir,admin'])->group(function () {
