@@ -7,6 +7,11 @@ use App\Models\Pegawai;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash; // Wajib ditambahkan untuk enkripsi password
+use Database\Seeders\KategoriSeeder;
+use Database\Seeders\SupplierSeeder;
+use Database\Seeders\BarangSeeder;
+use Database\Seeders\DiskonSeeder;
+use Database\Seeders\MemberSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,7 +21,17 @@ class DatabaseSeeder extends Seeder
      * Seed the application's database.
      */
     public function run(): void
+    
+
     {
+          $this->call([
+            KategoriSeeder::class,
+            SupplierSeeder::class,
+            BarangSeeder::class,
+            DiskonSeeder::class,
+            MemberSeeder::class,
+        ]);
+
         // 1. Membuat akun Admin
         $admin = User::create([
             'name' => 'Admin Toko',
@@ -73,3 +88,4 @@ class DatabaseSeeder extends Seeder
         ]);
     }
 }
+

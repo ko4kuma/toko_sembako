@@ -36,4 +36,8 @@ class Transaksi extends Model
     public function transaksiDiskon(){
         return $this->hasMany(TransaksiDiskon::class);
     }
+    public function barang()
+    {
+        return $this->belongsTo(Barang::class);
+    }
 }

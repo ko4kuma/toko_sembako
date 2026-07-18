@@ -46,6 +46,11 @@
                 <a href="{{ route('pembelian.detail', $p->id) }}" class="btn btn-info btn-sm">
                     Detail
                 </a>
+            
+                <a href="{{ route('pembelian.edit', $p->id) }}"
+                class="btn btn-warning btn-sm">
+                Edit
+            </a>
             </td>
         </tr>
 
